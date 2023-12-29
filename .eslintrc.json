@@ -1,0 +1,21 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["airbnb-base", "airbnb-typescript/base", "prettier"],
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    "class-methods-use-this": "off" /* Lit's render() method */,
+    "import/extensions": "off",
+    "import/prefer-default-export": "off",
+    "no-plusplus": "off",
+    "no-nested-ternary": "off",
+    "no-underscore-dangle": "off"
+  },
+  "ignorePatterns": ["wasm/*"]
+}

@@ -1,0 +1,39 @@
+{
+  "name": "timestation",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "postbuild": "mkdir -p ./dist/wasm && cp ./wasm/*.js ./wasm/*.wasm ./dist/wasm",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "lit": "^3.1.0"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-decorators": "^7.23.5",
+    "@babel/preset-typescript": "^7.23.3",
+    "@types/emscripten": "^1.39.10",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "@vitejs/plugin-basic-ssl": "^1.0.2",
+    "autoprefixer": "^10.4.16",
+    "daisyui": "^4.4.2",
+    "eslint": "^8.54.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-n": "^16.3.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "postcss": "^8.4.31",
+    "prettier": "^3.1.0",
+    "tailwindcss": "^3.3.5",
+    "terser": "^5.26.0",
+    "typescript": "^5.3.2",
+    "vite": "^4.5.0",
+    "vite-plugin-babel": "^1.1.3"
+  }
+}

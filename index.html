@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Time Station Emulator</title>
+    <!--
+      Needed for SharedArrayBuffer on Github Pages and other
+      web hosts on which we can't control server HTTP headers.
+    -->
+    <script src="scripts/coi-serviceworker.js"></script>
+    <script src="src/main.ts" type="module"></script>
+  </head>
+  <body>
+    <time-signal></time-signal>
+  </body>
+
+</html>
