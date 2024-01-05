@@ -1,7 +1,11 @@
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 import BaseElement, { registerEventHandler } from "./shared/element";
-import { EditDistanceReadyEvent, ReadyBusyEvent } from "./shared/events";
+import {
+  EditDistanceReadyEvent,
+  ReadyBusyEvent,
+  TimeSignalReadyEvent,
+} from "./shared/events";
 
 import "./shared/styles.css";
 
@@ -24,14 +28,23 @@ import "./components/utcclock";
 export class TimeSignal extends BaseElement {
   #editDistanceReady = false;
 
+  #timeSignalReady = false;
+
   @registerEventHandler(EditDistanceReadyEvent)
   handleEditDistanceReady() {
     this.#editDistanceReady = true;
     this.#notifyReadyBusy();
   }
 
+  @registerEventHandler(TimeSignalReadyEvent)
+  handleTimeSignalReady() {
+    this.#timeSignalReady = true;
+    this.#notifyReadyBusy();
+  }
+
   #notifyReadyBusy() {
-    if (this.#editDistanceReady) this.publishEvent(ReadyBusyEvent, true);
+    if (this.#editDistanceReady && this.#timeSignalReady)
+      this.publishEvent(ReadyBusyEvent, true);
   }
 
   protected render() {

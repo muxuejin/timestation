@@ -2,8 +2,24 @@ import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, StartStopEvent } from "../shared/events";
-import { Station, getAppSetting } from "../shared/appsettings";
+import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "../shared/events";
+import {
+  Station,
+  getAppSetting,
+  getAppSettings,
+  jjyKhz,
+  stations,
+} from "../shared/appsettings";
+import RadioTimeSignal from "../shared/radiotimesignal";
+
+const kStartStopButtonText = {
+  stopped: "Start",
+  starting: "Stop",
+  started: "Stop",
+  stopping: "Stopping",
+} as const;
+
+type StartStopButtonState = keyof typeof kStartStopButtonText;
 
 @customElement("start-stop-button")
 export class StartStopButton extends BaseElement {
@@ -11,24 +27,43 @@ export class StartStopButton extends BaseElement {
   private accessor ready = false;
 
   @state()
-  private accessor start = false;
-
-  @state()
   private accessor station!: Station;
 
+  get #state(): StartStopButtonState {
+    switch (RadioTimeSignal.state) {
+      case "idle":
+        return "stopped";
+
+      case "startup":
+      case "reqparams":
+      case "loadparams":
+        return "starting";
+
+      case "fadein":
+      case "running":
+      case "fadeout":
+        return "started";
+
+      case "suspend":
+      default:
+        return "stopping";
+    }
+  }
+
   #start() {
-    this.start = true;
-    this.publishEvent(StartStopEvent, true);
+    const { station, jjyKhz: khz, offset, dut1, noclip } = getAppSettings();
+    const stationIndex = stations.indexOf(station);
+    const jjyKhzIndex = jjyKhz.indexOf(khz);
+    RadioTimeSignal.start({ stationIndex, jjyKhzIndex, offset, dut1, noclip });
   }
 
   #stop() {
-    this.start = false;
-    this.publishEvent(StartStopEvent, false);
+    RadioTimeSignal.stop();
   }
 
   #click() {
-    if (this.start) this.#stop();
-    else this.#start();
+    if (this.#state === "stopped") this.#start();
+    else this.#stop();
   }
 
   #getSettings() {
@@ -42,17 +77,21 @@ export class StartStopButton extends BaseElement {
     this.ready = ready;
   }
 
+  @registerEventHandler(TimeSignalStateChangeEvent)
+  handleTimeSignalStateChange() {
+    this.requestUpdate();
+  }
+
   protected render() {
     const classes = classMap({
-      "btn-success": this.ready && !this.start,
-      "btn-error": this.ready && this.start,
-      "btn-disabled": !this.ready,
+      "btn-success": this.ready && this.#state === "stopped",
+      "btn-error":
+        this.ready && (this.#state === "starting" || this.#state === "started"),
+      "btn-disabled": !this.ready || this.#state === "stopping",
     });
 
-    const buttonText =
-      !this.ready ? "loading"
-      : !this.start ? `Start ${this.station}`
-      : `Stop ${this.station}`;
+    const stateText = kStartStopButtonText[this.#state];
+    const buttonText = !this.ready ? "loading" : `${stateText} ${this.station}`;
 
     return html`
       <button

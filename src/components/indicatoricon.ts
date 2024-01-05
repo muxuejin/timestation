@@ -2,7 +2,8 @@ import { SVGTemplateResult, TemplateResult, html, svg } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, StartStopEvent } from "../shared/events";
+import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "../shared/events";
+import { TimeSignalState } from "../shared/radiotimesignal";
 
 /* ionicons v5.0.0: https://ionic.io/ionicons */
 const kSvgFragments = {
@@ -39,6 +40,9 @@ export class IndicatorIcon extends BaseElement {
   @state()
   private accessor ready = false;
 
+  @state()
+  private accessor pulse = false;
+
   #timeoutId?: number;
 
   #updateIcon = (iconState: IndicatorIconState) => {
@@ -58,12 +62,14 @@ export class IndicatorIcon extends BaseElement {
   #stop() {
     clearTimeout(this.#timeoutId);
     this.iconState = "mute";
+    this.pulse = false;
   }
 
-  @registerEventHandler(StartStopEvent)
-  handleStartStop(start: boolean) {
-    if (start) this.#start();
-    else this.#stop();
+  @registerEventHandler(TimeSignalStateChangeEvent)
+  handleTimeSignalStateChange(newState: TimeSignalState) {
+    if (newState === "startup") this.pulse = true;
+    if (newState === "fadein") this.#start();
+    if (newState === "idle") this.#stop();
   }
 
   @registerEventHandler(ReadyBusyEvent)
@@ -95,7 +101,7 @@ export class IndicatorIcon extends BaseElement {
   }
 
   protected render() {
-    const animate = classMap({ "animate-pulse": this.iconState !== "mute" });
+    const animate = classMap({ "animate-pulse": this.pulse });
 
     return html`
       <div class="grid w-36 h-36 sm:w-48 sm:h-48 place-items-center">

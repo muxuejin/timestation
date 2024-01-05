@@ -125,6 +125,10 @@ export function getAppSetting<T extends AppSetting>(
   return appSettings[setting];
 }
 
+export function getAppSettings(): AppSettings {
+  return { ...appSettings };
+}
+
 export function resetAppSettings() {
   setAppSetting("station", kDefaultAppSettings.station);
   setAppSetting("locale", kDefaultAppSettings.locale);
