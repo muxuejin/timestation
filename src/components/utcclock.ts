@@ -2,7 +2,7 @@ import { html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent } from "../shared/events";
+import { ReadyBusyEvent, ServerOffsetEvent } from "../shared/events";
 import monotonicTime, {
   formatTimeZoneOffset,
   isEuropeanSummerTime,
@@ -68,6 +68,9 @@ export class UtcClock extends BaseElement {
   @property({ type: Number, reflect: true })
   accessor offset!: number;
 
+  @property({ type: Number, reflect: true })
+  accessor serverOffset = 0;
+
   @state()
   private accessor ready = false;
 
@@ -83,7 +86,8 @@ export class UtcClock extends BaseElement {
   }
 
   #updateClock = () => {
-    const timestamp = monotonicTime(this.offset) + kCssTransitionMs;
+    const offset = this.offset + this.serverOffset;
+    const timestamp = monotonicTime(offset) + kCssTransitionMs;
 
     /* Due to timer drift, rollover may not have actually occurred yet. */
     const timestampMs = timestamp % 1000;
@@ -108,6 +112,11 @@ export class UtcClock extends BaseElement {
     else this.#stop();
 
     this.ready = ready;
+  }
+
+  @registerEventHandler(ServerOffsetEvent)
+  handleServerOffset(serverOffset: number) {
+    this.serverOffset = serverOffset;
   }
 
   connectedCallback() {

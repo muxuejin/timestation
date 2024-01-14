@@ -37,6 +37,7 @@ const kValidators = {
   offset: (x: any) => Number.isSafeInteger(x) && x > -86400000 && x < 86400000,
   dut1: (x: any) => Number.isSafeInteger(x) && x > -1000 && x < 1000,
   noclip: (x: any) => typeof x === "boolean",
+  sync: (x: any) => typeof x === "boolean",
   dark: (x: any) => typeof x === "boolean",
 } as const;
 export type AppSetting = keyof typeof kValidators;
@@ -47,6 +48,7 @@ export type AppSettings = {
   offset: number;
   dut1: number;
   noclip: boolean;
+  sync: boolean;
   dark: boolean;
 };
 
@@ -57,6 +59,7 @@ const kDefaultAppSettings: AppSettings = {
   offset: 0,
   dut1: 0,
   noclip: true,
+  sync: true,
   dark: window.matchMedia?.("(prefers-color-scheme: dark").matches ?? false,
 } as const;
 
@@ -70,7 +73,11 @@ function convertStoredValue<T extends AppSetting>(
   if (value != null) {
     if (setting === "station" || setting === "locale") {
       converted = value;
-    } else if (setting === "noclip" || setting === "dark") {
+    } else if (
+      setting === "noclip" ||
+      setting === "sync" ||
+      setting === "dark"
+    ) {
       if (value === "true" || value === "false") converted = value === "true";
     } else {
       const parsed = parseFloat(value);
@@ -136,5 +143,6 @@ export function resetAppSettings() {
   setAppSetting("offset", kDefaultAppSettings.offset);
   setAppSetting("dut1", kDefaultAppSettings.dut1);
   setAppSetting("noclip", kDefaultAppSettings.noclip);
+  setAppSetting("sync", kDefaultAppSettings.sync);
   setAppSetting("dark", kDefaultAppSettings.dark);
 }

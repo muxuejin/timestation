@@ -2,7 +2,11 @@ import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "../shared/events";
+import {
+  ReadyBusyEvent,
+  ServerOffsetEvent,
+  TimeSignalStateChangeEvent,
+} from "../shared/events";
 import {
   Station,
   getAppSetting,
@@ -23,6 +27,8 @@ type StartStopButtonState = keyof typeof kStartStopButtonText;
 
 @customElement("start-stop-button")
 export class StartStopButton extends BaseElement {
+  #serverOffset = 0;
+
   @state()
   private accessor ready = false;
 
@@ -52,9 +58,13 @@ export class StartStopButton extends BaseElement {
 
   #start() {
     const { station, jjyKhz: khz, offset, dut1, noclip } = getAppSettings();
-    const stationIndex = stations.indexOf(station);
-    const jjyKhzIndex = jjyKhz.indexOf(khz);
-    RadioTimeSignal.start({ stationIndex, jjyKhzIndex, offset, dut1, noclip });
+    RadioTimeSignal.start({
+      stationIndex: stations.indexOf(station),
+      jjyKhzIndex: jjyKhz.indexOf(khz),
+      offset: offset + this.#serverOffset,
+      dut1,
+      noclip,
+    });
   }
 
   #stop() {
@@ -80,6 +90,11 @@ export class StartStopButton extends BaseElement {
   @registerEventHandler(TimeSignalStateChangeEvent)
   handleTimeSignalStateChange() {
     this.requestUpdate();
+  }
+
+  @registerEventHandler(ServerOffsetEvent)
+  handleServerOffset(serverOffset: number) {
+    this.#serverOffset = serverOffset;
   }
 
   protected render() {

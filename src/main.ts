@@ -1,11 +1,15 @@
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
+import { getAppSetting } from "./shared/appsettings";
 import BaseElement, { registerEventHandler } from "./shared/element";
 import {
   EditDistanceReadyEvent,
   ReadyBusyEvent,
+  ServerTimeReadyEvent,
+  SettingsReadyEvent,
   TimeSignalReadyEvent,
 } from "./shared/events";
+import serverTimeTask from "./shared/servertime";
 
 import "./shared/styles.css";
 
@@ -18,6 +22,7 @@ import "./components/localesettings";
 import "./components/menulist";
 import "./components/numericinput";
 import "./components/offsetsettings";
+import "./components/servertimesettings";
 import "./components/settingsmodal";
 import "./components/signbutton";
 import "./components/startstopbutton";
@@ -28,11 +33,27 @@ import "./components/utcclock";
 export class TimeSignal extends BaseElement {
   #editDistanceReady = false;
 
+  #serverTimeReady = false;
+
+  #settingsReady = true;
+
   #timeSignalReady = false;
 
   @registerEventHandler(EditDistanceReadyEvent)
   handleEditDistanceReady() {
     this.#editDistanceReady = true;
+    this.#notifyReadyBusy();
+  }
+
+  @registerEventHandler(ServerTimeReadyEvent)
+  handleServerTimeReady() {
+    this.#serverTimeReady = true;
+    this.#notifyReadyBusy();
+  }
+
+  @registerEventHandler(SettingsReadyEvent)
+  handleSettingsReady(ready: boolean) {
+    this.#settingsReady = ready;
     this.#notifyReadyBusy();
   }
 
@@ -43,8 +64,15 @@ export class TimeSignal extends BaseElement {
   }
 
   #notifyReadyBusy() {
-    if (this.#editDistanceReady && this.#timeSignalReady)
-      this.publishEvent(ReadyBusyEvent, true);
+    const wasmReady = this.#editDistanceReady && this.#timeSignalReady;
+    const prereqsReady = wasmReady && this.#serverTimeReady;
+    if (prereqsReady) this.publishEvent(ReadyBusyEvent, this.#settingsReady);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (getAppSetting("sync")) serverTimeTask();
+    else this.#serverTimeReady = true;
   }
 
   protected render() {

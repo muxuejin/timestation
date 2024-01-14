@@ -4,7 +4,11 @@ import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { resetAppSettings } from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
+import {
+  ReadyBusyEvent,
+  SettingsEvent,
+  SettingsReadyEvent,
+} from "../shared/events";
 import { svgIcons } from "../shared/icons";
 
 @customElement("settings-modal")
@@ -26,12 +30,12 @@ export class SettingsModal extends BaseElement {
 
   #closeModal() {
     this.publishEvent(SettingsEvent, "close");
-    this.publishEvent(ReadyBusyEvent, true);
+    this.publishEvent(SettingsReadyEvent, true);
   }
 
   #clickIcon() {
     if (this.ready) {
-      this.publishEvent(ReadyBusyEvent, false);
+      this.publishEvent(SettingsReadyEvent, false);
       this.#showModal();
     }
   }
@@ -78,6 +82,7 @@ export class SettingsModal extends BaseElement {
           <station-settings></station-settings>
           <offset-settings></offset-settings>
           <clipping-settings></clipping-settings>
+          <server-time-settings></server-time-settings>
 
           <form class="flex gap-4 items-center pt-16" method="dialog">
             <div class="grow"></div>
