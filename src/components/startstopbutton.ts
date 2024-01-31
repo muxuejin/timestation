@@ -7,13 +7,7 @@ import {
   ServerOffsetEvent,
   TimeSignalStateChangeEvent,
 } from "../shared/events";
-import {
-  Station,
-  getAppSetting,
-  getAppSettings,
-  jjyKhz,
-  stations,
-} from "../shared/appsettings";
+import AppSettings, { Station, jjyKhz, stations } from "../shared/appsettings";
 import RadioTimeSignal from "../shared/radiotimesignal";
 
 const kStartStopButtonText = {
@@ -57,7 +51,7 @@ export class StartStopButton extends BaseElement {
   }
 
   #start() {
-    const { station, jjyKhz: khz, offset, dut1, noclip } = getAppSettings();
+    const { station, jjyKhz: khz, offset, dut1, noclip } = AppSettings.getAll();
     RadioTimeSignal.start({
       stationIndex: stations.indexOf(station),
       jjyKhzIndex: jjyKhz.indexOf(khz),
@@ -77,7 +71,7 @@ export class StartStopButton extends BaseElement {
   }
 
   #getSettings() {
-    this.station = getAppSetting("station");
+    this.station = AppSettings.get("station");
   }
 
   @registerEventHandler(ReadyBusyEvent)
@@ -105,12 +99,19 @@ export class StartStopButton extends BaseElement {
       "btn-disabled": !this.ready || this.#state === "stopping",
     });
 
-    const stateText = kStartStopButtonText[this.#state];
-    const buttonText = !this.ready ? "loading" : `${stateText} ${this.station}`;
+    let buttonText = "loading";
+    if (this.ready) {
+      const stateText = kStartStopButtonText[this.#state];
+      const station =
+        this.station === "JJY" ?
+          `${this.station}${AppSettings.get("jjyKhz")}`
+        : this.station;
+      buttonText = `${stateText} ${station}`;
+    }
 
     return html`
       <button
-        class="btn btn-md sm:btn-lg btn-wide drop-shadow ${classes}"
+        class="btn btn-md btn-wide sm:btn-lg sm:w-[24rem] drop-shadow ${classes}"
         @click=${this.#click}
       >
         ${buttonText}

@@ -1,29 +1,16 @@
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { classMap } from "lit/directives/class-map.js";
+import { customElement } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import { resetAppSettings } from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import {
-  ReadyBusyEvent,
-  SettingsEvent,
-  SettingsReadyEvent,
-} from "../shared/events";
-import { svgIcons } from "../shared/icons";
+import AppSettings from "../shared/appsettings";
+import BaseElement from "../shared/element";
+import { SettingsEvent, SettingsReadyEvent } from "../shared/events";
 
 @customElement("settings-modal")
 export class SettingsModal extends BaseElement {
-  @state()
-  private accessor ready = false;
-
-  @registerEventHandler(ReadyBusyEvent)
-  handleReadyBusy(ready: boolean) {
-    this.ready = ready;
-  }
-
   #dialogRef = createRef<HTMLDialogElement>();
 
-  #showModal() {
+  showModal() {
+    this.publishEvent(SettingsReadyEvent, false);
     const dialog = this.#dialogRef.value!;
     dialog.showModal();
   }
@@ -33,38 +20,19 @@ export class SettingsModal extends BaseElement {
     this.publishEvent(SettingsReadyEvent, true);
   }
 
-  #clickIcon() {
-    if (this.ready) {
-      this.publishEvent(SettingsReadyEvent, false);
-      this.#showModal();
-    }
-  }
-
   #clickSave() {
     this.publishEvent(SettingsEvent, "save");
   }
 
   protected render() {
-    const iconClasses = classMap({
-      "[&:not(:hover)]:text-secondary": this.ready,
-      "hover:animate-boingo": this.ready,
-      "cursor-pointer": this.ready,
-      "cursor-default": !this.ready,
-      "text-secondary": !this.ready,
-    });
-
     return html`
-      <div class=${iconClasses} @click=${this.#clickIcon}>
-        <span class="fill-current">${svgIcons.settings}</span>
-      </div>
-
       <dialog
         ${ref(this.#dialogRef)}
         class="modal modal-bottom sm:modal-middle"
         @close=${this.#closeModal}
       >
         <div class="modal-box max-h-screen flex flex-col gap-4">
-          <form class="flex items-center pb-4" method="dialog">
+          <form class="flex items-center mb-8" method="dialog">
             <h3 class="grow font-bold text-xl sm:text-2xl">Settings</h3>
 
             <!-- Invisible dummy button takes autofocus when modal is opened -->
@@ -72,7 +40,7 @@ export class SettingsModal extends BaseElement {
 
             <button
               class="btn btn-sm btn-ghost hover:bg-transparent"
-              @click=${resetAppSettings}
+              @click=${AppSettings.reset}
             >
               Reset All
             </button>
@@ -81,10 +49,9 @@ export class SettingsModal extends BaseElement {
           <locale-settings></locale-settings>
           <station-settings></station-settings>
           <offset-settings></offset-settings>
-          <clipping-settings></clipping-settings>
-          <server-time-settings></server-time-settings>
+          <advanced-settings></advanced-settings>
 
-          <form class="flex gap-4 items-center pt-16" method="dialog">
+          <form class="flex gap-4 items-center mt-8" method="dialog">
             <div class="grow"></div>
             <button class="btn" @click=${this.#clickSave}>Save Settings</button>
             <button class="btn">Cancel</button>

@@ -2,26 +2,6 @@ import { defaultLocale, supportedLocales } from "./locales";
 
 const kSupportedLocales = new Set(supportedLocales);
 
-const kHasLocalStorage = (() => {
-  /* cf. https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API */
-  let storage: Storage | undefined;
-  try {
-    storage = window.localStorage;
-    const x = "__storage_test__";
-    storage.setItem(x, x);
-    storage.removeItem(x);
-  } catch (e) {
-    return (
-      e instanceof DOMException &&
-      (e.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
-        e.name === "QuotaExceededError") &&
-      storage != null &&
-      storage.length !== 0
-    );
-  }
-  return true;
-})();
-
 const kStations = ["BPC", "DCF77", "JJY", "MSF", "WWVB"] as const;
 export type Station = (typeof kStations)[number];
 export const stations: readonly Station[] = [...kStations] as const;
@@ -30,7 +10,20 @@ const kJjyKhz = [40, 60] as const;
 export type JjyKhz = (typeof kJjyKhz)[number];
 export const jjyKhz: readonly JjyKhz[] = [...kJjyKhz] as const;
 
-const kValidators = {
+const kAppSettings = [
+  "station",
+  "locale",
+  "jjyKhz",
+  "offset",
+  "dut1",
+  "noclip",
+  "sync",
+  "dark",
+] as const;
+export type AppSetting = (typeof kAppSettings)[number];
+export const appSettings: readonly AppSetting[] = [...kAppSettings] as const;
+
+const kValidators: Record<AppSetting, (x: any) => boolean> = {
   station: (x: any) => stations.includes(x),
   locale: (x: any) => kSupportedLocales.has(x),
   jjyKhz: (x: any) => jjyKhz.includes(x),
@@ -40,8 +33,8 @@ const kValidators = {
   sync: (x: any) => typeof x === "boolean",
   dark: (x: any) => typeof x === "boolean",
 } as const;
-export type AppSetting = keyof typeof kValidators;
-export type AppSettings = {
+
+type AppSettingType = {
   station: Station;
   locale: string;
   jjyKhz: JjyKhz;
@@ -51,8 +44,7 @@ export type AppSettings = {
   sync: boolean;
   dark: boolean;
 };
-
-const kDefaultAppSettings: AppSettings = {
+const kDefaultAppSettings: AppSettingType = {
   station: "WWVB",
   locale: defaultLocale,
   jjyKhz: 40,
@@ -63,86 +55,102 @@ const kDefaultAppSettings: AppSettings = {
   dark: window.matchMedia?.("(prefers-color-scheme: dark").matches ?? false,
 } as const;
 
-const appSettings: AppSettings = { ...kDefaultAppSettings };
-
 function convertStoredValue<T extends AppSetting>(
   setting: T,
   value?: string,
-): AppSettings[T] | undefined {
+): AppSettingType[T] | undefined {
   let converted: any;
   if (value != null) {
     if (setting === "station" || setting === "locale") {
       converted = value;
     } else if (
-      setting === "noclip" ||
-      setting === "sync" ||
-      setting === "dark"
+      (setting === "noclip" || setting === "sync" || setting === "dark") &&
+      (value === "true" || value === "false")
     ) {
-      if (value === "true" || value === "false") converted = value === "true";
+      converted = value === "true";
     } else {
       const parsed = parseFloat(value);
       if (!Number.isNaN(parsed) && Number.isSafeInteger(parsed))
         converted = parsed;
     }
   }
-  return converted != null ? (converted as AppSettings[T]) : undefined;
+  return converted != null ? (converted as AppSettingType[T]) : undefined;
 }
 
 function isValueValid(setting: AppSetting, value: any) {
   return kValidators[setting](value);
 }
 
-function isStoredValueValid<T extends AppSetting>(setting: T, value?: string) {
-  const convertedValue = convertStoredValue(setting, value);
-  return convertedValue != null && isValueValid(setting, convertedValue);
+function hasLocalStorage() {
+  /* cf. https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API */
+  let storage: Storage | undefined;
+  try {
+    storage = window.localStorage;
+    const x = "__storage_test__";
+    storage.setItem(x, x);
+    storage.removeItem(x);
+    return true;
+  } catch (e) {
+    return (
+      e instanceof DOMException &&
+      (e.name === "NS_ERROR_DOM_QUOTA_REACHED" ||
+        e.name === "QuotaExceededError") &&
+      storage != null &&
+      storage.length !== 0
+    );
+  }
 }
 
-export function setAppSetting<T extends AppSetting>(
-  setting: T,
-  value: AppSettings[T],
-) {
-  if (!isValueValid(setting, value))
-    throw new Error(`"${value}" is an invalid ${setting}`);
-  if (kHasLocalStorage) window.localStorage.setItem(setting, `${value}`);
-  appSettings[setting] = value;
-}
+class AppSettings {
+  static #instance: AppSettings;
 
-export function getAppSetting<T extends AppSetting>(
-  setting: T,
-): AppSettings[T] {
-  const value = appSettings[setting];
-  const isValid = isValueValid(setting, value);
+  #settings: AppSettingType;
 
-  if (kHasLocalStorage) {
-    const storedValue = window.localStorage.getItem(setting) ?? undefined;
-    const isStoredValid = isStoredValueValid(setting, storedValue);
+  #hasLocalStorage = hasLocalStorage();
 
-    if (isStoredValid) {
-      appSettings[setting] = convertStoredValue(setting, storedValue)!;
-    } else if (isValid) {
-      setAppSetting(setting, value);
-    } else {
-      appSettings[setting] = kDefaultAppSettings[setting];
-      setAppSetting(setting, appSettings[setting]);
-    }
-  } else if (!isValid) {
-    appSettings[setting] = kDefaultAppSettings[setting];
+  constructor() {
+    if (AppSettings.#instance != null)
+      throw new Error("AppSettings is a singleton class.");
+    AppSettings.#instance = this;
+
+    if (this.#hasLocalStorage)
+      this.#settings = Object.fromEntries(
+        Object.entries(kDefaultAppSettings).map(([name, defaultValue]) => {
+          const setting = name as AppSetting;
+          const storedValue = window.localStorage.getItem(setting) ?? undefined;
+          const value = convertStoredValue(setting, storedValue);
+          const isValid = value != null && isValueValid(setting, value);
+          return [setting, isValid ? value : defaultValue];
+        }),
+      ) as AppSettingType;
+    else this.#settings = { ...kDefaultAppSettings };
   }
 
-  return appSettings[setting];
+  set<T extends AppSetting>(setting: T, value: AppSettingType[T]) {
+    if (!isValueValid(setting, value))
+      throw new Error(`"${value}" is an invalid ${setting}`);
+    if (this.#hasLocalStorage) window.localStorage.setItem(setting, `${value}`);
+    this.#settings[setting] = value;
+  }
+
+  get<T extends AppSetting>(setting: T): AppSettingType[T] {
+    let value = this.#settings[setting];
+    if (!isValueValid(setting, value)) {
+      value = kDefaultAppSettings[setting];
+      this.set(setting, value);
+    }
+    return value;
+  }
+
+  getAll(): AppSettingType {
+    return { ...this.#settings };
+  }
+
+  reset() {
+    Object.entries(kDefaultAppSettings).forEach(([setting, defaultValue]) => {
+      this.set(setting as AppSetting, defaultValue);
+    });
+  }
 }
 
-export function getAppSettings(): AppSettings {
-  return { ...appSettings };
-}
-
-export function resetAppSettings() {
-  setAppSetting("station", kDefaultAppSettings.station);
-  setAppSetting("locale", kDefaultAppSettings.locale);
-  setAppSetting("jjyKhz", kDefaultAppSettings.jjyKhz);
-  setAppSetting("offset", kDefaultAppSettings.offset);
-  setAppSetting("dut1", kDefaultAppSettings.dut1);
-  setAppSetting("noclip", kDefaultAppSettings.noclip);
-  setAppSetting("sync", kDefaultAppSettings.sync);
-  setAppSetting("dark", kDefaultAppSettings.dark);
-}
+export default new AppSettings();

@@ -43,7 +43,7 @@ export class IndicatorIcon extends BaseElement {
   @state()
   private accessor pulse = false;
 
-  #timeoutId?: number;
+  #timeoutId?: ReturnType<typeof setTimeout>;
 
   #updateIcon = (iconState: IndicatorIconState) => {
     const nextIconState =
@@ -105,7 +105,7 @@ export class IndicatorIcon extends BaseElement {
 
     return html`
       <div class="grid w-36 h-36 sm:w-48 sm:h-48 place-items-center">
-        <span class="drop-shadow-1 fill-current ${animate}">
+        <span class="drop-shadow-aura fill-current ${animate}">
           ${this.ready ? this.#makeIcon() : kSpinner}
         </span>
       </div>

@@ -1,3 +1,4 @@
+export const ArrowDropdownEvent = "ArrowDropdown" as const;
 export const EditDistanceReadyEvent = "EditDistanceReady" as const;
 export const LocaleSettingEvent = "LocaleSetting" as const;
 export const MenuListSelectEvent = "MenuListSelect" as const;

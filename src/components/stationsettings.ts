@@ -1,22 +1,22 @@
 import { HTMLTemplateResult, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import {
+import AppSettings, {
   JjyKhz,
   Station,
-  getAppSetting,
   jjyKhz,
-  setAppSetting,
   stations,
 } from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
+  ArrowDropdownEvent,
   MenuListSelectEvent,
   ReadyBusyEvent,
   SettingsEvent,
 } from "../shared/events";
 import { svgFlags } from "../shared/icons";
+import { ArrowDropdown } from "./arrowdropdown";
 import { MenuList } from "./menulist";
 import { NumericInput } from "./numericinput";
 import { SignButton } from "./signbutton";
@@ -29,19 +29,16 @@ const kStationIcons: Record<Station, HTMLTemplateResult> = {
   WWVB: svgFlags.us,
 } as const;
 
+const kStationSettingsGroup = "StationSettings" as const;
+
 @customElement("station-settings")
 export class StationSettings extends BaseElement {
-  static listId = "StationSettings";
-
   @property({ type: String, reflect: true })
   accessor station: Station = "WWVB";
 
-  #dropdownRef = createRef<HTMLDetailsElement>();
+  #arrowDropdownRef = createRef<ArrowDropdown>();
 
   #stationListRef = createRef<MenuList>();
-
-  @state()
-  private accessor isOverflowVisible = false;
 
   @property({ type: Number, reflect: true })
   accessor dut1 = 0;
@@ -55,7 +52,7 @@ export class StationSettings extends BaseElement {
 
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
-    this.#closeDropdown();
+    this.#closeArrowDropdown();
     if (eventType === "save") this.#saveSettings();
   }
 
@@ -66,16 +63,16 @@ export class StationSettings extends BaseElement {
 
   @registerEventHandler(MenuListSelectEvent)
   handleMenuListSelect(listId: string, station: string) {
-    if (listId === StationSettings.listId) {
+    if (listId === kStationSettingsGroup) {
       this.station = station as Station;
-      this.#closeDropdown();
+      this.#closeArrowDropdown();
     }
   }
 
   #getSettings() {
-    this.station = getAppSetting("station");
-    this.dut1 = getAppSetting("dut1");
-    this.jjyKhz = getAppSetting("jjyKhz");
+    this.station = AppSettings.get("station");
+    this.dut1 = AppSettings.get("dut1");
+    this.jjyKhz = AppSettings.get("jjyKhz");
 
     const stationList = this.#stationListRef.value;
     const sign = this.#dut1SignRef.value;
@@ -93,74 +90,29 @@ export class StationSettings extends BaseElement {
     const dut1Abs = Math.abs(this.#dut1Ref.value!.value);
     this.dut1 = isNegative ? -dut1Abs : dut1Abs;
 
-    setAppSetting("station", this.station);
-    setAppSetting("dut1", this.dut1);
-    setAppSetting("jjyKhz", this.jjyKhz);
-  }
-
-  #makeDropdown() {
-    const stationList = this.#stationListRef.value;
-    if (stationList != null && stationList.items.length === 0) {
-      stationList.items = [...stations];
-      stationList.item = this.station;
-    }
-
-    return html`
-      <details ${ref(this.#dropdownRef)} class="dropdown">
-        <summary
-          class="btn btn-ghost hover:bg-transparent dropdown-arrow w-36"
-          @click=${() => this.requestUpdate()}
-          @keydown=${{
-            handleEvent: this.#keydownDropdown,
-            capture: true,
-          }}
-          @blur=${this.#closeDropdown}
-        >
-          ${kStationIcons[this.station]}
-          <span class="grow">${this.station}</span>
-        </summary>
-
-        <menu-list
-          ${ref(this.#stationListRef)}
-          classes="dropdown-content menu mt-1 pt-1 w-36 drop-shadow z-[1] bg-base-200 rounded-box"
-          itemclasses="gap-4 px-2"
-          .listId=${StationSettings.listId}
-          .itemTemplate=${this.#makeStationListItem}
-          .item=${this.station}
-          spaceSelects
-        ></menu-list>
-      </details>
-    `;
+    AppSettings.set("station", this.station);
+    AppSettings.set("dut1", this.dut1);
+    AppSettings.set("jjyKhz", this.jjyKhz);
   }
 
   #makeStationListItem = (station: string) => {
     const icon = kStationIcons[station as Station];
     return html`
-      ${icon}
+      <span class="w-8 h-6">${icon}</span>
       <span class="grow">${station}</span>
     `;
   };
 
-  #focusInCollapse() {
-    this.isOverflowVisible = true;
-  }
-
-  #focusOutCollapse() {
-    this.isOverflowVisible = false;
-  }
-
-  #keydownDropdown = (event: KeyboardEvent) => {
-    const dropdown = this.#dropdownRef.value!;
-    if (!dropdown.hasAttribute("open")) return;
-
+  #keydown = (event: KeyboardEvent) => {
+    const arrowDropdown = this.#arrowDropdownRef.value;
     const stationList = this.#stationListRef.value;
-    stationList?.keydown(event);
+    if (arrowDropdown != null && stationList != null && arrowDropdown.open)
+      stationList.keydown(event);
   };
 
-  #closeDropdown() {
-    /* Call removeAttribute() async as a workaround for a visual bug. */
-    const dropdown = this.#dropdownRef.value!;
-    setTimeout(() => dropdown.removeAttribute("open"));
+  #closeArrowDropdown() {
+    const arrowDropdown = this.#arrowDropdownRef.value;
+    if (arrowDropdown != null) arrowDropdown.open = false;
   }
 
   #makeDut1() {
@@ -173,11 +125,11 @@ export class StationSettings extends BaseElement {
         .content=${html`
           <h4 class="font-bold">DUT1</h4>
           <span class="text-sm">
-            Leap second correction up to &pm;999 ms.
-            <br class="hidden min-[400px]:grid" />
-            Actual value depends on Earth's rotation.
+            Leap second correction up to &pm;999 ms. Actual value depends on
+            Earth&rsquo;s rotation.
           </span>
         `}
+        grow
       ></info-dropdown>
 
       <div class="join join-focus-within">
@@ -237,29 +189,57 @@ export class StationSettings extends BaseElement {
     /* DUT1 picker loses unsaved values if GC'd. Render once & hide in CSS. */
     const hasDut1 = this.station === "MSF" || this.station === "WWVB";
     const hasJjyKhz = this.station === "JJY";
-    const isOpen = hasDut1 || hasJjyKhz;
-
     const hideDut1 = classMap({ hidden: !hasDut1 });
     const hideJjyKhz = classMap({ hidden: !hasJjyKhz });
-    const collapseClasses = classMap({
-      "overflow-visible": this.isOverflowVisible,
-      "collapse-open": isOpen,
-    });
+
+    /*
+     * Providing a group attribute to our arrow-dropdown would make our
+     * collapse-setting open/close in tandem. Instead, manually publish
+     * the events that open it only when the station is MSF, JJY, or WWVB.
+     */
+    const isOpen = hasDut1 || hasJjyKhz;
+    this.publishEvent(ArrowDropdownEvent, kStationSettingsGroup, isOpen);
+
+    const stationList = this.#stationListRef.value;
+    if (stationList != null && stationList.items.length === 0) {
+      stationList.items = [...stations];
+      stationList.item = this.station;
+    }
 
     return html`
       <div class="flex flex-col">
         <div class="flex items-center">
           <h3 class="grow font-bold text-lg sm:text-xl">Station</h3>
-          ${this.#makeDropdown()}
+          <arrow-dropdown
+            ${ref(this.#arrowDropdownRef)}
+            classes="w-36 flex-nowrap after:shrink-0"
+            .keydown=${this.#keydown}
+            .text=${html`
+              <span class="flex gap-2 w-full items-center">
+                <span class="w-8 h-6 border border-base-100"
+                  >${kStationIcons[this.station]}</span
+                >
+                <span class="grow">${this.station}</span>
+              </span>
+            `}
+            .content=${html`
+              <menu-list
+                ${ref(this.#stationListRef)}
+                classes="dropdown-content menu mt-1 pt-1 w-36 drop-shadow z-[1] bg-base-200 rounded-box"
+                itemclasses="gap-4 px-2"
+                .listId=${kStationSettingsGroup}
+                .itemTemplate=${this.#makeStationListItem}
+                .item=${this.station}
+                spaceSelects
+              ></menu-list>
+            `}
+          ></arrow-dropdown>
         </div>
 
-        <div
-          class="collapse ${collapseClasses}"
-          @focusin=${this.#focusInCollapse}
-          @focusout=${this.#focusOutCollapse}
-        >
-          <div class="collapse-content !p-0">
-            <div class="h-12 mt-4">
+        <collapse-setting
+          .group=${kStationSettingsGroup}
+          .content=${html`
+            <div class="h-12 mt-4 ml-2">
               <span class="flex items-center ${hideDut1}">
                 ${this.#makeDut1()}
               </span>
@@ -268,8 +248,8 @@ export class StationSettings extends BaseElement {
                 ${this.#makeJjyKhz()}
               </span>
             </div>
-          </div>
-        </div>
+          `}
+        ></collapse-setting>
       </div>
     `;
   }

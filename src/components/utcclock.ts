@@ -7,7 +7,7 @@ import monotonicTime, {
   formatTimeZoneOffset,
   isEuropeanSummerTime,
 } from "../shared/time";
-import { Station, getAppSetting } from "../shared/appsettings";
+import AppSettings, { Station } from "../shared/appsettings";
 import { knownLocales } from "../shared/locales";
 
 type DstDetector = (utcTimestamp: number) => boolean;
@@ -80,9 +80,9 @@ export class UtcClock extends BaseElement {
   #timeoutId?: number;
 
   #getSettings() {
-    this.station = getAppSetting("station");
-    this.offset = getAppSetting("offset");
-    this.locale = getAppSetting("locale");
+    this.station = AppSettings.get("station");
+    this.offset = AppSettings.get("offset");
+    this.locale = AppSettings.get("locale");
   }
 
   #updateClock = () => {
@@ -204,27 +204,56 @@ export class UtcClock extends BaseElement {
     const tzPadding = classMap({ "pr-2": padding, "sm:pr-4": padding });
 
     return html`
-      <div
-        class="flex flex-col px-4 gap-2 sm:gap-4 max-w-fit min-w-fit font-semibold items-center"
-      >
-        <div class="flex gap-2 sm:gap-3 items-center">
-          <div class="font-mono font-black text-4xl sm:text-8xl">${hh}</div>
-          <span class="text-3xl sm:text-5xl">:</span>
-          <div class="font-mono font-black text-4xl sm:text-8xl">${mm}</div>
-          <span class="text-3xl sm:text-5xl">:</span>
-          <div class="font-mono font-black text-4xl sm:text-8xl">${ss}</div>
-          <div class="${amPmHidden} text-2xl sm:text-4xl self-end">${amPm}</div>
+      <div class="indicator">
+        <div class="indicator-item whitespace-normal">
+          <info-dropdown
+            classes="max-w-[15rem] sm:max-w-[31rem]"
+            .content=${html`
+              <span class="flex flex-col gap-2">
+                <h4 class="font-bold sm:text-lg">Transmitted Time</h4>
+                <span class="text-sm sm:text-base text-wrap">
+                  The date, time, and time zone
+                  <strong>that will be transmitted</strong>.
+                </span>
+                <span class="text-sm sm:text-base text-wrap">
+                  Usually, this is <strong>not</strong> a &ldquo;preview&rdquo;
+                  of how a device will display the time it receives, but it may
+                  be a useful point of reference if you need to enter an offset.
+                </span>
+                <span class="text-sm sm:text-base text-wrap">
+                  See <strong>About &gt; Calculating Offsets</strong> in the
+                  menu for more details.
+                </span>
+              </span>
+            `}
+            grow
+            end
+          ></info-dropdown>
         </div>
-
         <div
-          class="flex ${dateWidth} justify-center text-2xl sm:text-5xl overflow-visible whitespace-nowrap"
+          class="flex flex-col px-4 gap-2 sm:gap-4 max-w-fit min-w-fit font-semibold items-center"
         >
-          ${date}
-        </div>
+          <div class="flex gap-2 sm:gap-3 items-center">
+            <div class="font-mono font-black text-4xl sm:text-8xl">${hh}</div>
+            <span class="text-3xl sm:text-5xl">:</span>
+            <div class="font-mono font-black text-4xl sm:text-8xl">${mm}</div>
+            <span class="text-3xl sm:text-5xl">:</span>
+            <div class="font-mono font-black text-4xl sm:text-8xl">${ss}</div>
+            <div class="${amPmHidden} text-2xl sm:text-4xl self-end">
+              ${amPm}
+            </div>
+          </div>
 
-        <div class="flex ${tzPadding} w-full items-center">
-          <span class="grow"></span>
-          <span class="text-xl sm:text-3xl">${tz}${offset}</span>
+          <div
+            class="flex ${dateWidth} justify-center text-2xl sm:text-5xl overflow-visible whitespace-nowrap"
+          >
+            ${date}
+          </div>
+
+          <div class="flex ${tzPadding} w-full items-center">
+            <span class="grow"></span>
+            <span class="text-xl sm:text-3xl">${tz}${offset}</span>
+          </div>
         </div>
       </div>
     `;

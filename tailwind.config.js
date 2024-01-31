@@ -11,25 +11,52 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Inter", ...tailwindTheme.fontFamily.sans],
+        serif: ["Time Station Emulator", ...tailwindTheme.fontFamily.serif],
         mono: ["Victor Mono", ...tailwindTheme.fontFamily.mono],
       },
       dropShadow: {
-        1: "1px 2px 2px hsl(var(--color-drop-shadow) / 0.6)",
-        2: [
-          "1px 2px 2px hsl(var(--color-drop-shadow) / 0.333)",
-          "2px 4px 4px hsl(var(--color-drop-shadow) / 0.333)",
-          "3px 6px 6px hsl(var(--color-drop-shadow) / 0.333)",
-        ],
-        3: [
-          "1px 2px 2px hsl(var(--color-drop-shadow) / 0.2)",
-          "2px 4px 4px hsl(var(--color-drop-shadow) / 0.2)",
-          "4px 8px 8px hsl(var(--color-drop-shadow) / 0.2)",
-          "8px 16px 16px hsl(var(--color-drop-shadow) / 0.2)",
-          "16px 32px 32px hsl(var(--color-drop-shadow) / 0.2)",
-        ],
+        aura: "0 0 0.125rem hsl(var(--color-drop-shadow) / 0.6)",
       },
       width: {
         18: "4.5rem",
+      },
+      keyframes: {
+        boingo: {
+          "0%, 100%": {
+            "transform": "translateY(0)",
+            "animation-timing-function": "cubic-bezier(0.5, -0.5, 0.5, 1)",
+          },
+          "20%": {
+            "transform": "translateY(-6%)",
+            "animation-timing-function": "cubic-bezier(0.5, 0, 0.5, 1)",
+          },
+          "40%": {
+            "transform": "translateY(1.5%)",
+            "animation-timing-function": "cubic-bezier(0.5, 0, 0.5, 1)",
+          },
+          "60%": {
+            "transform": "translateY(-2%)",
+            "animation-timing-function": "cubic-bezier(0.5, 0, 0.5, 1)",
+          },
+          "80%": {
+            "transform": "translateY(0.5%)",
+            "animation-timing-function": "cubic-bezier(0.5, 0, 0.5, 1.5)",
+          },
+        },
+        shapes: {
+          "0%": {
+            transform: "translateY(0)",
+            opacity: "1",
+          },
+          "100%": {
+            transform: "translateY(-200vh)",
+            opacity: "0",
+          },
+        },
+      },
+      animation: {
+        boingo: "boingo 0.3s 1",
+        shapes: "shapes linear infinite",
       },
     },
   },

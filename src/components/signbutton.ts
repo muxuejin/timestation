@@ -21,7 +21,7 @@ export class SignButton extends BaseElement {
     const classes = classMap(Object.fromEntries(entries));
     return html`
       <button class=${classes} type="button" @click=${this.#click}>
-        <span class="w-10 h-10">
+        <span class="w-8 h-8">
           ${this.negative ? svgIcons.remove : svgIcons.add}
         </span>
       </button>

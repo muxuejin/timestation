@@ -1,7 +1,7 @@
 import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import { getAppSetting, setAppSetting } from "../shared/appsettings";
+import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
   LocaleSettingEvent,
@@ -9,18 +9,20 @@ import {
   SettingsEvent,
 } from "../shared/events";
 import { defaultLocale, knownLocales } from "../shared/locales";
+import { ArrowDropdown } from "./arrowdropdown";
+import { kLocaleSearchboxGroup } from "./localesearchbox";
 
 @customElement("locale-settings")
 export class LocaleSettings extends BaseElement {
   @property({ type: String, reflect: true })
   accessor locale = defaultLocale;
 
-  #dropdownRef = createRef<HTMLDetailsElement>();
+  #arrowDropdownRef = createRef<ArrowDropdown>();
 
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
     if (eventType === "save") this.#saveSettings();
-    this.#closeDropdown();
+    this.#closeCollapse();
   }
 
   @registerEventHandler(ReadyBusyEvent)
@@ -29,35 +31,23 @@ export class LocaleSettings extends BaseElement {
   }
 
   @registerEventHandler(LocaleSettingEvent)
-  handleLocaleSetting(type: string, value?: string) {
-    if (type === "set") {
-      this.locale = value!;
-      this.#closeDropdown();
-    }
+  handleLocaleSetting(value: string) {
+    this.locale = value;
+    this.#closeCollapse();
   }
 
   #getSettings() {
-    this.locale = getAppSetting("locale");
-    this.publishEvent(LocaleSettingEvent, "set", this.locale);
+    this.locale = AppSettings.get("locale");
+    this.publishEvent(LocaleSettingEvent, this.locale);
   }
 
   #saveSettings() {
-    setAppSetting("locale", this.locale);
+    AppSettings.set("locale", this.locale);
   }
 
-  #clickDropdown() {
-    const dropdown = this.#dropdownRef.value;
-    if (dropdown == null) return;
-
-    const isOpen = !dropdown.hasAttribute("open");
-    this.publishEvent(LocaleSettingEvent, isOpen ? "open" : "close");
-  }
-
-  #closeDropdown() {
-    /* Call removeAttribute() async as a workaround for a visual bug. */
-    const dropdown = this.#dropdownRef.value;
-    setTimeout(() => dropdown?.removeAttribute("open"));
-    this.publishEvent(LocaleSettingEvent, "close");
+  #closeCollapse() {
+    const arrowDropdown = this.#arrowDropdownRef.value;
+    if (arrowDropdown != null) arrowDropdown.open = false;
   }
 
   protected render() {
@@ -70,26 +60,29 @@ export class LocaleSettings extends BaseElement {
 
           <info-dropdown
             class="grow"
-            classes="max-w-[9rem] min-[360px]:max-w-[17rem]"
+            classes="max-w-[14rem] min-[440px]:max-w-max"
             .content=${html`
               <h4 class="font-bold">Locale</h4>
               <span class="text-sm float-left">
-                Changes how time is displayed.
+                Changes only how transmitted time is displayed.
               </span>
             `}
+            grow
           ></info-dropdown>
 
-          <details ${ref(this.#dropdownRef)} class="dropdown">
-            <summary
-              class="btn btn-ghost hover:bg-transparent dropdown-arrow flex-nowrap after:shrink-0"
-              @click=${this.#clickDropdown}
-            >
-              <span class="text-right">${displayName}</span>
-            </summary>
-          </details>
+          <arrow-dropdown
+            ${ref(this.#arrowDropdownRef)}
+            classes="flex-nowrap after:shrink-0"
+            .group=${kLocaleSearchboxGroup}
+            .text=${html`${displayName}`}
+          ></arrow-dropdown>
         </div>
 
-        <locale-searchbox></locale-searchbox>
+        <collapse-setting
+          .group=${kLocaleSearchboxGroup}
+          .content=${html`<locale-searchbox></locale-searchbox>`}
+        >
+        </collapse-setting>
       </div>
     `;
   }

@@ -50,7 +50,7 @@ export class NumericInput extends BaseElement {
     }
   }
 
-  attemptFocus() {
+  focus() {
     const input = this.#ref.value;
     input?.focus();
   }
@@ -75,12 +75,12 @@ export class NumericInput extends BaseElement {
       case "Backspace":
         if (index > 0 && input.value === "") {
           this.#backspacedWhileEmpty = !this.#backspacedWhileEmpty;
-          if (!this.#backspacedWhileEmpty) group[index - 1].attemptFocus();
+          if (!this.#backspacedWhileEmpty) group[index - 1].focus();
         }
         break;
 
       case "Enter":
-        if (index < group.length - 1) group[index + 1].attemptFocus();
+        if (index < group.length - 1) group[index + 1].focus();
         else input.blur();
         break;
 
@@ -108,7 +108,7 @@ export class NumericInput extends BaseElement {
 
     const group = NumericInput.groups[this.group];
     const index = group.indexOf(this);
-    if (index < group.length - 1) group[index + 1].attemptFocus();
+    if (index < group.length - 1) group[index + 1].focus();
   }
 
   #focus() {

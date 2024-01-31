@@ -1,28 +1,24 @@
 import { html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import { classMap } from "lit/directives/class-map.js";
-import { getAppSetting, setAppSetting } from "../shared/appsettings";
+import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
+import { decodeHtmlEntity } from "../shared/strings";
+import { decomposeOffset } from "../shared/time";
+import { ArrowDropdown } from "./arrowdropdown";
 import { NumericInput } from "./numericinput";
 import { SignButton } from "./signbutton";
-import { decomposeOffset } from "../shared/time";
-import { decodeHtmlEntity } from "../shared/strings";
+
+const kOffsetSettingsGroup = "OffsetSettings";
 
 @customElement("offset-settings")
 export class OffsetSettings extends BaseElement {
   @property({ type: Number })
   accessor offset = 0;
 
-  @state()
-  private accessor isOverflowVisible = false;
-
-  @state()
-  private accessor isCollapseOpen = false;
-
   #refs = {
-    dropdown: createRef<HTMLDetailsElement>(),
+    arrowDropdown: createRef<ArrowDropdown>(),
     sign: createRef<SignButton>(),
     hh: createRef<NumericInput>(),
     mm: createRef<NumericInput>(),
@@ -58,7 +54,7 @@ export class OffsetSettings extends BaseElement {
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
     if (eventType === "save") this.#saveSettings();
-    this.#closeDropdown();
+    this.#closeCollapse();
   }
 
   @registerEventHandler(ReadyBusyEvent)
@@ -66,8 +62,13 @@ export class OffsetSettings extends BaseElement {
     if (ready) this.#getSettings();
   }
 
+  #requestUpdate = () => {
+    /* .requestUpdate() complains otherwise when used as an event listener. */
+    this.requestUpdate();
+  };
+
   #getSettings() {
-    this.offset = getAppSetting("offset");
+    this.offset = AppSettings.get("offset");
 
     const { negative, hh, mm, ss, ms } = decomposeOffset(this.offset);
 
@@ -82,117 +83,92 @@ export class OffsetSettings extends BaseElement {
     if (mmRef != null) mmRef.value = mm;
     if (ssRef != null) ssRef.value = ss;
     if (msRef != null) msRef.value = ms;
+
+    this.requestUpdate();
   }
 
   #saveSettings() {
-    setAppSetting("offset", this.#unsavedOffset!);
+    AppSettings.set("offset", this.#unsavedOffset!);
   }
 
-  #clickDropdown() {
-    const dropdown = this.#refs.dropdown.value;
-    if (dropdown != null) this.isCollapseOpen = !dropdown.hasAttribute("open");
+  #closeCollapse() {
+    const arrowDropdown = this.#refs.arrowDropdown.value;
+    if (arrowDropdown != null) arrowDropdown.open = false;
   }
 
-  #closeDropdown() {
-    /* Call removeAttribute() async as a workaround for a visual bug. */
-    const dropdown = this.#refs.dropdown.value;
-    setTimeout(() => dropdown?.removeAttribute("open"));
-    this.isOverflowVisible = false;
-    this.isCollapseOpen = false;
-  }
+  #makeCollapseContent() {
+    return html`
+      <div class="flex mt-4 ml-2 w-full justify-end items-center">
+        <div class="join join-focus-within" @focusout=${this.#requestUpdate}>
+          <sign-button
+            ${ref(this.#refs.sign)}
+            classes="join-item btn w-12 p-0"
+            @click=${this.#requestUpdate}
+            .value=${this.offset < 0}
+          ></sign-button>
 
-  #makeCollapse() {
-    const collapseClasses = classMap({
-      "overflow-visible": this.isOverflowVisible,
-      "collapse-open": this.isCollapseOpen,
-    });
-    return html` <div class="collapse ${collapseClasses}">
-      <div class="collapse-content !p-0">
-        <div class="flex mt-4 w-full justify-end items-center">
-          <div
-            class="join join-focus-within"
-            @focusin=${this.#focusInCollapse}
-            @focusout=${this.#focusOutCollapse}
-          >
-            <sign-button
-              ${ref(this.#refs.sign)}
-              classes="join-item btn w-12 p-0"
-              @click=${() => this.requestUpdate()}
-              .value=${this.offset < 0}
-            ></sign-button>
+          <div class="join-item ms-0 w-2"></div>
 
-            <div class="join-item ms-0 w-2"></div>
+          <span class="ms-0">
+            <numeric-input
+              ${ref(this.#refs.hh)}
+              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              min="0"
+              max="23"
+              @blur=${this.#requestUpdate}
+              .value=${this.#refs.hh.value?.value ?? NaN}
+              .group=${kOffsetSettingsGroup}
+            ></numeric-input>
+          </span>
 
-            <span class="ms-0">
-              <numeric-input
-                ${ref(this.#refs.hh)}
-                classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
-                min="0"
-                max="23"
-                .value=${this.#refs.hh.value?.value ?? NaN}
-                .group=${"offset-settings"}
-              >
-              </numeric-input>
-            </span>
+          <div class="join-item ms-0 grid w-3 place-items-center">h</div>
 
-            <div class="join-item ms-0 grid w-3 place-items-center">h</div>
+          <span class="ms-0">
+            <numeric-input
+              ${ref(this.#refs.mm)}
+              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              min="0"
+              max="59"
+              @blur=${this.#requestUpdate}
+              .value=${this.#refs.mm.value?.value ?? NaN}
+              .group=${kOffsetSettingsGroup}
+            ></numeric-input>
+          </span>
 
-            <span class="ms-0">
-              <numeric-input
-                ${ref(this.#refs.mm)}
-                classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
-                min="0"
-                max="59"
-                .value=${this.#refs.mm.value?.value ?? NaN}
-                .group=${"offset-settings"}
-              >
-              </numeric-input>
-            </span>
+          <div class="join-item ms-0 grid w-4 place-items-center">m</div>
 
-            <div class="join-item ms-0 grid w-4 place-items-center">m</div>
+          <span class="ms-0">
+            <numeric-input
+              ${ref(this.#refs.ss)}
+              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              min="0"
+              max="59"
+              @blur=${this.#requestUpdate}
+              .value=${this.#refs.ss.value?.value ?? NaN}
+              .group=${kOffsetSettingsGroup}
+            ></numeric-input>
+          </span>
 
-            <span class="ms-0">
-              <numeric-input
-                ${ref(this.#refs.ss)}
-                classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
-                min="0"
-                max="59"
-                .value=${this.#refs.ss.value?.value ?? NaN}
-                .group=${"offset-settings"}
-              >
-              </numeric-input>
-            </span>
+          <div class="join-item ms-0 grid w-3 place-items-center">s</div>
 
-            <div class="join-item ms-0 grid w-3 place-items-center">s</div>
+          <span class="ms-0">
+            <numeric-input
+              ${ref(this.#refs.ms)}
+              classes="join-item input border-0 w-9 px-0 font-bold text-center focus-within:outline-none"
+              min="0"
+              max="999"
+              @blur=${this.#requestUpdate}
+              .value=${this.#refs.ms.value?.value ?? NaN}
+              .group=${kOffsetSettingsGroup}
+            ></numeric-input>
+          </span>
 
-            <span class="ms-0">
-              <numeric-input
-                ${ref(this.#refs.ms)}
-                classes="join-item input border-0 w-9 px-0 font-bold text-center focus-within:outline-none"
-                min="0"
-                max="999"
-                .value=${this.#refs.ms.value?.value ?? NaN}
-                .group=${"offset-settings"}
-              >
-              </numeric-input>
-            </span>
+          <div class="join-item ms-0 grid w-6 place-items-center">ms</div>
 
-            <div class="join-item ms-0 grid w-6 place-items-center">ms</div>
-
-            <div class="join-item ms-0 w-2"></div>
-          </div>
+          <div class="join-item ms-0 w-2"></div>
         </div>
       </div>
-    </div>`;
-  }
-
-  #focusInCollapse() {
-    this.isOverflowVisible = true;
-  }
-
-  #focusOutCollapse() {
-    this.isOverflowVisible = false;
-    this.requestUpdate();
+    `;
   }
 
   #displayOffset() {
@@ -211,6 +187,9 @@ export class OffsetSettings extends BaseElement {
   }
 
   protected render() {
+    const displayOffset = this.#displayOffset();
+    const collapseContent = this.#makeCollapseContent();
+
     return html`
       <div class="flex items-center">
         <h3 class="font-bold text-lg sm:text-xl">Offset</h3>
@@ -226,17 +205,18 @@ export class OffsetSettings extends BaseElement {
           `}
         ></info-dropdown>
 
-        <details ${ref(this.#refs.dropdown)} class="dropdown">
-          <summary
-            class="btn btn-ghost hover:bg-transparent dropdown-arrow flex-nowrap after:shrink-0"
-            @click=${this.#clickDropdown}
-          >
-            <span class="text-right">${this.#displayOffset()}</span>
-          </summary>
-        </details>
+        <arrow-dropdown
+          ${ref(this.#refs.arrowDropdown)}
+          .group=${kOffsetSettingsGroup}
+          .text=${html`${displayOffset}`}
+        ></arrow-dropdown>
       </div>
 
-      ${this.#makeCollapse()}
+      <collapse-setting
+        .group=${kOffsetSettingsGroup}
+        .content=${collapseContent}
+      >
+      </collapse-setting>
     `;
   }
 }
