@@ -1,6 +1,5 @@
 import { html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
+import { customElement, property, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
@@ -17,7 +16,8 @@ export class LocaleSettings extends BaseElement {
   @property({ type: String, reflect: true })
   accessor locale = defaultLocale;
 
-  #arrowDropdownRef = createRef<ArrowDropdown>();
+  @query("locale-settings arrow-dropdown", true)
+  private accessor arrowDropdown!: ArrowDropdown;
 
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
@@ -46,8 +46,7 @@ export class LocaleSettings extends BaseElement {
   }
 
   #closeCollapse() {
-    const arrowDropdown = this.#arrowDropdownRef.value;
-    if (arrowDropdown != null) arrowDropdown.open = false;
+    this.arrowDropdown.open = false;
   }
 
   protected render() {
@@ -71,7 +70,6 @@ export class LocaleSettings extends BaseElement {
           ></info-dropdown>
 
           <arrow-dropdown
-            ${ref(this.#arrowDropdownRef)}
             classes="flex-nowrap after:shrink-0"
             .group=${kLocaleSearchboxGroup}
             .text=${html`${displayName}`}

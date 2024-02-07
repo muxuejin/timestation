@@ -1,6 +1,5 @@
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
+import { customElement, query, state } from "lit/decorators.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
   ArrowDropdownEvent,
@@ -23,9 +22,11 @@ export class LocaleSearchbox extends BaseElement {
   @state()
   private accessor locale: string = defaultLocale;
 
-  #inputRef = createRef<HTMLInputElement>();
+  @query('locale-searchbox input[type="search"].input', true)
+  private accessor searchBox!: HTMLInputElement;
 
-  #suggestionsRef = createRef<MenuList>();
+  @query("locale-searchbox menu-list", true)
+  private accessor suggestions!: MenuList;
 
   #isSuggestionsMousedown = false;
 
@@ -57,21 +58,18 @@ export class LocaleSearchbox extends BaseElement {
   }
 
   #input() {
-    const input = this.#inputRef.value!;
-    const text = input.value;
+    const text = this.searchBox.value;
     if (text.length > 0) this.#runQuery(text);
     else this.#closeSuggestions();
   }
 
   #clearInput() {
-    const input = this.#inputRef.value;
-    if (input != null) input.value = "";
+    this.searchBox.value = "";
     this.#closeSuggestions();
   }
 
   #keydown(event: KeyboardEvent) {
-    const suggestions = this.#suggestionsRef.value;
-    suggestions?.keydown(event);
+    this.suggestions.keydown(event);
   }
 
   #blur() {
@@ -87,16 +85,12 @@ export class LocaleSearchbox extends BaseElement {
   }
 
   #refocusSuggestions = () => {
-    if (this.#isSuggestionsMousedown) {
-      const input = this.#inputRef.value;
-      input?.focus();
-    }
+    if (this.#isSuggestionsMousedown) this.searchBox.focus();
     this.#isSuggestionsMousedown = false;
   };
 
   #closeSuggestions() {
-    const suggestions = this.#suggestionsRef.value;
-    if (suggestions != null) suggestions.enabledItems = [];
+    this.suggestions.enabledItems = [];
     this.#isSuggestionsMousedown = false;
   }
 
@@ -111,12 +105,10 @@ export class LocaleSearchbox extends BaseElement {
   };
 
   #runQuery(text: string) {
-    const query = text.slice(0, maxLocaleNameCodeUnits);
-    const suggestions = this.#suggestionsRef?.value;
-    if (suggestions != null) {
-      if (suggestions.items.length === 0) suggestions.items = supportedLocales;
-      suggestions.enabledItems = LocaleEditDistance.runQuery(query);
-    }
+    const searchQuery = text.slice(0, maxLocaleNameCodeUnits);
+    if (this.suggestions.items.length === 0)
+      this.suggestions.items = supportedLocales;
+    this.suggestions.enabledItems = LocaleEditDistance.runQuery(searchQuery);
     this.requestUpdate();
   }
 
@@ -129,7 +121,6 @@ export class LocaleSearchbox extends BaseElement {
 
       <div class="join join-focus-within w-full">
         <input
-          ${ref(this.#inputRef)}
           class="input border-0 focus-within:outline-none w-full font-semibold placeholder:text-sm sm:placeholder:text-md"
           type="search"
           title="BCP47-like locale tag, native language/region name"
@@ -149,7 +140,6 @@ export class LocaleSearchbox extends BaseElement {
       </div>
 
       <menu-list
-        ${ref(this.#suggestionsRef)}
         classes="menu flex-nowrap drop-shadow z-[1] mt-1 pt-0 w-full bg-base-200 absolute max-h-[13.5rem] overflow-auto rounded-box rounded-t-none"
         itemclasses="flex"
         .listId=${kLocaleSearchboxGroup}

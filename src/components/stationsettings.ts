@@ -1,7 +1,6 @@
 import { HTMLTemplateResult, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { createRef, ref } from "lit/directives/ref.js";
 import AppSettings, {
   JjyKhz,
   Station,
@@ -36,19 +35,25 @@ export class StationSettings extends BaseElement {
   @property({ type: String, reflect: true })
   accessor station: Station = "WWVB";
 
-  #arrowDropdownRef = createRef<ArrowDropdown>();
+  @query("station-settings arrow-dropdown", true)
+  private accessor arrowDropdown!: ArrowDropdown;
 
-  #stationListRef = createRef<MenuList>();
+  @query("station-settings menu-list", true)
+  private accessor stationList!: MenuList;
 
   @property({ type: Number, reflect: true })
   accessor dut1 = 0;
 
-  #dut1SignRef = createRef<SignButton>();
+  @query("station-settings collapse-setting sign-button", true)
+  private accessor dut1SignButton!: SignButton;
 
-  #dut1Ref = createRef<NumericInput>();
+  @query("station-settings collapse-setting numeric-input", true)
+  private accessor dut1Input!: NumericInput;
 
   @property({ type: Number, reflect: true })
   accessor jjyKhz: JjyKhz = 40;
+
+  #isRendered = false;
 
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
@@ -74,25 +79,22 @@ export class StationSettings extends BaseElement {
     this.dut1 = AppSettings.get("dut1");
     this.jjyKhz = AppSettings.get("jjyKhz");
 
-    const stationList = this.#stationListRef.value;
-    const sign = this.#dut1SignRef.value;
-    const input = this.#dut1Ref.value;
-
-    if (stationList != null) stationList.item = this.station;
-    if (sign != null) sign.negative = this.dut1 < 0;
-    if (input != null) input.value = Math.abs(this.dut1);
+    this.stationList.item = this.station;
+    this.dut1SignButton.negative = this.dut1 < 0;
+    this.dut1Input.value = Math.abs(this.dut1);
 
     this.requestUpdate();
   }
 
   #saveSettings() {
-    const isNegative = this.#dut1SignRef.value!.negative;
-    const dut1Abs = Math.abs(this.#dut1Ref.value!.value);
+    const isNegative = this.dut1SignButton.negative;
+    const dut1Abs = Math.abs(this.dut1Input.value);
     this.dut1 = isNegative ? -dut1Abs : dut1Abs;
 
     AppSettings.set("station", this.station);
-    AppSettings.set("dut1", this.dut1);
-    AppSettings.set("jjyKhz", this.jjyKhz);
+    if (this.station === "MSF" || this.station === "WWVB")
+      AppSettings.set("dut1", this.dut1);
+    if (this.station === "JJY") AppSettings.set("jjyKhz", this.jjyKhz);
   }
 
   #makeStationListItem = (station: string) => {
@@ -104,15 +106,11 @@ export class StationSettings extends BaseElement {
   };
 
   #keydown = (event: KeyboardEvent) => {
-    const arrowDropdown = this.#arrowDropdownRef.value;
-    const stationList = this.#stationListRef.value;
-    if (arrowDropdown != null && stationList != null && arrowDropdown.open)
-      stationList.keydown(event);
+    if (this.arrowDropdown.open) this.stationList.keydown(event);
   };
 
   #closeArrowDropdown() {
-    const arrowDropdown = this.#arrowDropdownRef.value;
-    if (arrowDropdown != null) arrowDropdown.open = false;
+    this.arrowDropdown.open = false;
   }
 
   #makeDut1() {
@@ -134,7 +132,6 @@ export class StationSettings extends BaseElement {
 
       <div class="join join-focus-within">
         <sign-button
-          ${ref(this.#dut1SignRef)}
           classes="join-item btn w-12 p-0"
           .value=${this.dut1 < 0}
         ></sign-button>
@@ -143,11 +140,9 @@ export class StationSettings extends BaseElement {
 
         <span class="ms-0">
           <numeric-input
-            ${ref(this.#dut1Ref)}
             classes="join-item input border-0 w-12 px-0 font-bold text-center focus-within:outline-none"
             min="0"
             max="999"
-            .value=${this.#dut1Ref.value?.value ?? NaN}
           ></numeric-input>
         </span>
 
@@ -185,6 +180,10 @@ export class StationSettings extends BaseElement {
     this.jjyKhz = kHz;
   }
 
+  protected firstUpdated() {
+    this.#isRendered = true;
+  }
+
   protected render() {
     /* DUT1 picker loses unsaved values if GC'd. Render once & hide in CSS. */
     const hasDut1 = this.station === "MSF" || this.station === "WWVB";
@@ -200,10 +199,9 @@ export class StationSettings extends BaseElement {
     const isOpen = hasDut1 || hasJjyKhz;
     this.publishEvent(ArrowDropdownEvent, kStationSettingsGroup, isOpen);
 
-    const stationList = this.#stationListRef.value;
-    if (stationList != null && stationList.items.length === 0) {
-      stationList.items = [...stations];
-      stationList.item = this.station;
+    if (this.#isRendered && this.stationList.items.length === 0) {
+      this.stationList.items = [...stations];
+      this.stationList.item = this.station;
     }
 
     return html`
@@ -211,7 +209,6 @@ export class StationSettings extends BaseElement {
         <div class="flex items-center">
           <h3 class="grow font-bold text-lg sm:text-xl">Station</h3>
           <arrow-dropdown
-            ${ref(this.#arrowDropdownRef)}
             classes="w-36 flex-nowrap after:shrink-0"
             .keydown=${this.#keydown}
             .text=${html`
@@ -224,7 +221,6 @@ export class StationSettings extends BaseElement {
             `}
             .content=${html`
               <menu-list
-                ${ref(this.#stationListRef)}
                 classes="dropdown-content menu mt-1 pt-1 w-36 drop-shadow z-[1] bg-base-200 rounded-box"
                 itemclasses="gap-4 px-2"
                 .listId=${kStationSettingsGroup}

@@ -1,6 +1,5 @@
 import { html } from "lit";
-import { customElement, property } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
+import { customElement, property, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
@@ -16,11 +15,12 @@ export class AdvancedSettings extends BaseElement {
   @property({ type: Boolean, reflect: true })
   accessor sync = true;
 
-  #arrowDropdownRef = createRef<ArrowDropdown>();
+  @query("advanced-settings arrow-dropdown", true)
+  private accessor arrowDropdown!: ArrowDropdown;
 
   @registerEventHandler(SettingsEvent)
   handleSettings(eventType: string) {
-    this.#closeArrowDropdown();
+    this.arrowDropdown.open = false;
     if (eventType === "save") this.#saveSettings();
   }
 
@@ -39,11 +39,6 @@ export class AdvancedSettings extends BaseElement {
     AppSettings.set("sync", this.sync);
   }
 
-  #closeArrowDropdown() {
-    const arrowDropdown = this.#arrowDropdownRef.value;
-    if (arrowDropdown != null) arrowDropdown.open = false;
-  }
-
   #changeNoclip = () => {
     this.noclip = !this.noclip;
   };
@@ -59,7 +54,6 @@ export class AdvancedSettings extends BaseElement {
           <h3 class="grow font-bold text-lg sm:text-xl">Advanced</h3>
 
           <arrow-dropdown
-            ${ref(this.#arrowDropdownRef)}
             classes="flex-nowrap after:shrink-0"
             .group=${kAdvancedSettingsGroup}
           ></arrow-dropdown>

@@ -77,7 +77,7 @@ export class UtcClock extends BaseElement {
   @state()
   private accessor timestamp = 0;
 
-  #timeoutId?: number;
+  #timeoutId?: ReturnType<typeof setTimeout>;
 
   #getSettings() {
     this.station = AppSettings.get("station");

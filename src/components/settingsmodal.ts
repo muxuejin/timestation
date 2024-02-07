@@ -1,18 +1,17 @@
 import { html } from "lit";
-import { customElement } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
+import { customElement, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement from "../shared/element";
 import { SettingsEvent, SettingsReadyEvent } from "../shared/events";
 
 @customElement("settings-modal")
 export class SettingsModal extends BaseElement {
-  #dialogRef = createRef<HTMLDialogElement>();
+  @query("settings-modal dialog.modal", true)
+  private accessor dialog!: HTMLDialogElement;
 
   showModal() {
     this.publishEvent(SettingsReadyEvent, false);
-    const dialog = this.#dialogRef.value!;
-    dialog.showModal();
+    this.dialog.showModal();
   }
 
   #closeModal() {
@@ -27,7 +26,6 @@ export class SettingsModal extends BaseElement {
   protected render() {
     return html`
       <dialog
-        ${ref(this.#dialogRef)}
         class="modal modal-bottom sm:modal-middle"
         @close=${this.#closeModal}
       >

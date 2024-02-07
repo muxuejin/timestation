@@ -1,12 +1,11 @@
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import { createRef, ref } from "lit/directives/ref.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent } from "../shared/events";
 import { svgIcons } from "../shared/icons";
-import { SettingsModal } from "./settingsmodal";
 import { AboutModal } from "./aboutmodal";
+import { SettingsModal } from "./settingsmodal";
 
 @customElement("nav-bar")
 export class NavBar extends BaseElement {
@@ -18,28 +17,28 @@ export class NavBar extends BaseElement {
     this.ready = ready;
   }
 
-  #dropdownRef = createRef<HTMLDetailsElement>();
+  @query("nav-bar details.dropdown", true)
+  private accessor dropdown!: HTMLDetailsElement;
 
-  #aboutModalRef = createRef<AboutModal>();
+  @query("nav-bar about-modal", true)
+  private accessor aboutModal!: AboutModal;
 
-  #settingsModalRef = createRef<SettingsModal>();
+  @query("nav-bar settings-modal", true)
+  private accessor settingsModal!: SettingsModal;
 
   #closeDropdown() {
     /* Call removeAttribute() async as a workaround for a visual bug. */
-    const dropdown = this.#dropdownRef.value!;
-    setTimeout(() => dropdown.removeAttribute("open"));
+    setTimeout(() => this.dropdown.removeAttribute("open"));
   }
 
   #clickAbout() {
     this.#closeDropdown();
-    const aboutModal = this.#aboutModalRef.value;
-    aboutModal?.showModal();
+    this.aboutModal.showModal();
   }
 
   #clickSettings() {
     this.#closeDropdown();
-    const settingsModal = this.#settingsModalRef.value;
-    settingsModal?.showModal();
+    this.settingsModal.showModal();
   }
 
   protected render() {
@@ -51,7 +50,7 @@ export class NavBar extends BaseElement {
     return html`
       <div class="navbar sm:min-h-20">
         <div class="navbar-start">
-          <details ${ref(this.#dropdownRef)} class="dropdown">
+          <details class="dropdown">
             <summary class="btn btn-ghost p-0 w-12 h-12 sm:w-16 sm:h-16">
               <span class="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
                 ${svgIcons.menu}
@@ -98,8 +97,8 @@ export class NavBar extends BaseElement {
         </div>
       </div>
 
-      <about-modal ${ref(this.#aboutModalRef)}></about-modal>
-      <settings-modal ${ref(this.#settingsModalRef)}></settings-modal>
+      <about-modal></about-modal>
+      <settings-modal></settings-modal>
     `;
   }
 }

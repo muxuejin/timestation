@@ -1,6 +1,5 @@
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
+import { customElement, state, query } from "lit/decorators.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { svgIcons } from "../shared/icons";
 import AppSettings from "../shared/appsettings";
@@ -9,9 +8,10 @@ import { ReadyBusyEvent } from "../shared/events";
 @customElement("dark-toggle")
 export class DarkToggle extends BaseElement {
   @state()
-  accessor dark = AppSettings.get("dark");
+  private accessor dark = AppSettings.get("dark");
 
-  #checkboxRef = createRef<HTMLInputElement>();
+  @query("dark-toggle input.theme-controller", true)
+  private accessor checkbox!: HTMLInputElement;
 
   @registerEventHandler(ReadyBusyEvent)
   handleReadyBusy(ready: boolean) {
@@ -19,9 +19,8 @@ export class DarkToggle extends BaseElement {
   }
 
   #change() {
-    const checkbox = this.#checkboxRef.value!;
-    AppSettings.set("dark", checkbox.checked);
-    this.dark = checkbox.checked;
+    this.dark = this.checkbox.checked;
+    AppSettings.set("dark", this.dark);
   }
 
   protected render() {
@@ -30,7 +29,6 @@ export class DarkToggle extends BaseElement {
         class="swap swap-rotate [&:not(:hover)]:text-secondary hover:animate-boingo"
       >
         <input
-          ${ref(this.#checkboxRef)}
           class="theme-controller"
           type="checkbox"
           value="darkish"

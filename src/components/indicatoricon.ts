@@ -46,7 +46,7 @@ export class IndicatorIcon extends BaseElement {
   #timeoutId?: ReturnType<typeof setTimeout>;
 
   #updateIcon = (iconState: IndicatorIconState) => {
-    const nextIconState =
+    const nextIconState: IndicatorIconState =
       iconState === "off" ? "low"
       : iconState === "low" ? "medium"
       : iconState === "medium" ? "high"
