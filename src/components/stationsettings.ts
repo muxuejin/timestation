@@ -197,7 +197,7 @@ export class StationSettings extends BaseElement {
      * the events that open it only when the station is MSF, JJY, or WWVB.
      */
     const isOpen = hasDut1 || hasJjyKhz;
-    this.publishEvent(ArrowDropdownEvent, kStationSettingsGroup, isOpen);
+    this.publish(ArrowDropdownEvent, kStationSettingsGroup, isOpen);
 
     if (this.#isRendered && this.stationList.items.length === 0) {
       this.stationList.items = [...stations];

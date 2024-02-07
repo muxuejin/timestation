@@ -10,17 +10,17 @@ export class SettingsModal extends BaseElement {
   private accessor dialog!: HTMLDialogElement;
 
   showModal() {
-    this.publishEvent(SettingsReadyEvent, false);
+    this.publish(SettingsReadyEvent, false);
     this.dialog.showModal();
   }
 
   #closeModal() {
-    this.publishEvent(SettingsEvent, "close");
-    this.publishEvent(SettingsReadyEvent, true);
+    this.publish(SettingsEvent, "close");
+    this.publish(SettingsReadyEvent, true);
   }
 
   #clickSave() {
-    this.publishEvent(SettingsEvent, "save");
+    this.publish(SettingsEvent, "save");
   }
 
   protected render() {

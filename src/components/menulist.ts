@@ -96,7 +96,7 @@ export class MenuList extends BaseElement {
 
   #mousedown(item: string) {
     this.item = item;
-    this.publishEvent(MenuListSelectEvent, this.listId, item);
+    this.publish(MenuListSelectEvent, this.listId, item);
   }
 
   #scrollToCurrentItem() {

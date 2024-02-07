@@ -17,7 +17,7 @@ function EventBusMixIn<TBase extends TLitElement>(Base: TBase) {
         );
     }
 
-    publishEvent(topic: string, ...eventData: any[]) {
+    publish(topic: string, ...eventData: any[]) {
       EventBus.publish(topic, ...eventData);
     }
 

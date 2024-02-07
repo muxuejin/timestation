@@ -31,7 +31,7 @@ export class ArrowDropdown extends BaseElement {
     this.#open = value;
 
     if (isChange && this.group !== "")
-      this.publishEvent(ArrowDropdownEvent, this.group, value);
+      this.publish(ArrowDropdownEvent, this.group, value);
 
     /*
      * The contained details element's "open" attribute should reflect ours.

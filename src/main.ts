@@ -70,7 +70,7 @@ export class TimeSignal extends BaseElement {
   #notifyReadyBusy() {
     const wasmReady = this.#editDistanceReady && this.#timeSignalReady;
     const prereqsReady = wasmReady && this.#serverTimeReady;
-    if (prereqsReady) this.publishEvent(ReadyBusyEvent, this.#settingsReady);
+    if (prereqsReady) this.publish(ReadyBusyEvent, this.#settingsReady);
   }
 
   connectedCallback() {

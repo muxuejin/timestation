@@ -38,7 +38,7 @@ export class LocaleSettings extends BaseElement {
 
   #getSettings() {
     this.locale = AppSettings.get("locale");
-    this.publishEvent(LocaleSettingEvent, this.locale);
+    this.publish(LocaleSettingEvent, this.locale);
   }
 
   #saveSettings() {

@@ -43,8 +43,7 @@ export class LocaleSearchbox extends BaseElement {
 
   @registerEventHandler(MenuListSelectEvent)
   handleMenuListSelect(listId: string, tag: string) {
-    if (listId === kLocaleSearchboxGroup)
-      this.publishEvent(LocaleSettingEvent, tag);
+    if (listId === kLocaleSearchboxGroup) this.publish(LocaleSettingEvent, tag);
   }
 
   connectedCallback() {
@@ -77,7 +76,7 @@ export class LocaleSearchbox extends BaseElement {
   }
 
   #resetLocale() {
-    this.publishEvent(LocaleSettingEvent, defaultLocale);
+    this.publish(LocaleSettingEvent, defaultLocale);
   }
 
   #mousedownSuggestions() {
