@@ -31,7 +31,7 @@ import "./components/settingsmodal";
 import "./components/signbutton";
 import "./components/startstopbutton";
 import "./components/stationsettings";
-import "./components/utcclock";
+import "./components/transmitclock";
 
 @customElement("time-signal")
 export class TimeSignal extends BaseElement {
@@ -87,7 +87,7 @@ export class TimeSignal extends BaseElement {
 
       <div class="flex justify-center items-center w-screen py-8 sm:py-16">
         <div class="flex flex-col items-center gap-4">
-          <utc-clock></utc-clock>
+          <transmit-clock></transmit-clock>
           <indicator-icon></indicator-icon>
           <start-stop-button></start-stop-button>
         </div>

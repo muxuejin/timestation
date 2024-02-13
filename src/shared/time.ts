@@ -25,12 +25,19 @@ export function isEuropeanSummerTime(utcTimestamp: number) {
 }
 
 export function formatTimeZoneOffset(offset: number) {
-  const minsOffset = Math.trunc(offset / (60 * 1000));
-  const sign = minsOffset < 0 ? "-" : "+";
-  const absOffset = Math.abs(minsOffset);
-  const hh = `${Math.trunc(absOffset / 60)}`.padStart(2, "0");
-  const mm = `${absOffset % 60}`.padStart(2, "0");
-  return `${sign}${hh}${mm}`;
+  const absOffset = Math.abs(offset);
+  const ms = absOffset % 1000;
+  const ss = Math.trunc(absOffset / 1000) % 60;
+  const mm = Math.trunc(absOffset / (60 * 1000)) % 60;
+  const hh = Math.trunc(absOffset / (60 * 60 * 1000));
+
+  let tzOffset = offset < 0 ? "-" : "+";
+  tzOffset += `${hh.toString().padStart(2, "0")}:`;
+  tzOffset += `${mm.toString().padStart(2, "0")}`;
+  if (ss !== 0 || ms !== 0) tzOffset += `:${ss.toString().padStart(2, "0")}`;
+  if (ms !== 0) tzOffset += `.${ms.toString().padStart(3, "0")}`;
+
+  return tzOffset;
 }
 
 export function decomposeOffset(offset: number) {

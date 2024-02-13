@@ -10,30 +10,20 @@ import monotonicTime, {
 import AppSettings, { Station } from "../shared/appsettings";
 import { knownLocales } from "../shared/locales";
 
-type DstDetector = (utcTimestamp: number) => boolean;
-type TimeZone = { name: string; offset: number; isDst?: DstDetector };
+type TimeZone = [tzName: string, offset: number];
 
 const kStationTimeZoneMap: Record<Station, TimeZone[]> = {
-  /* UTC+0800 */
-  BPC: [{ name: "CST", offset: 28800000 }],
-
-  /* UTC+0100, UTC+0200 */
+  BPC: [["CST", 28800000]] /* UTC+08:00 */,
   DCF77: [
-    { name: "CET", offset: 3600000 },
-    { name: "CEST", offset: 7200000, isDst: isEuropeanSummerTime },
+    ["CET", 3600000] /* UTC+01:00 */,
+    ["CEST", 7200000] /* UTC+02:00 */,
   ],
-
-  /* UTC+0900 */
-  JJY: [{ name: "JST", offset: 32400000 }],
-
-  /* UTC, UTC+0100 */
+  JJY: [["JST", 32400000] /* UTC+09:00 */],
   MSF: [
-    { name: "UTC", offset: 0 },
-    { name: "BST", offset: 3600000, isDst: isEuropeanSummerTime },
+    ["UTC", 0] /* UTC */,
+    ["BST", 3600000] /* UTC+01:00 */,
   ],
-
-  /* UTC */
-  WWVB: [{ name: "UTC", offset: 0 }],
+  WWVB: [["UTC", 0]] /* UTC */,
 } as const;
 
 const kSkeletons = {
@@ -57,8 +47,8 @@ const kDateFormatOptions = {
 /* cf. countdown digit transition override in shared/styles.css */
 const kCssTransitionMs = 250 as const;
 
-@customElement("utc-clock")
-export class UtcClock extends BaseElement {
+@customElement("transmit-clock")
+export class TransmitClock extends BaseElement {
   @property({ type: String, reflect: true })
   accessor station!: Station;
 
@@ -99,7 +89,7 @@ export class UtcClock extends BaseElement {
 
   #start() {
     this.#getSettings();
-    this.#timeoutId = setTimeout(this.#updateClock, 0);
+    this.#timeoutId = setTimeout(this.#updateClock);
   }
 
   #stop() {
@@ -110,7 +100,6 @@ export class UtcClock extends BaseElement {
   handleReadyBusy(ready: boolean) {
     if (ready) this.#start();
     else this.#stop();
-
     this.ready = ready;
   }
 
@@ -133,56 +122,47 @@ export class UtcClock extends BaseElement {
     const utcTimestamp = this.timestamp;
 
     const timeZones = kStationTimeZoneMap[this.station];
-    const isDst = timeZones[1]?.isDst?.(utcTimestamp);
-    const timeZone = timeZones[!isDst ? 0 : 1];
+    const isDst = timeZones.length > 1 && isEuropeanSummerTime(utcTimestamp);
+    const [tzName, offset] = timeZones[+isDst];
 
-    const { name: tzName, offset: tzOffset } = timeZone;
-    const displayTimestamp = utcTimestamp + tzOffset;
+    const displayDate = new Date(utcTimestamp + offset);
     const displayOffset =
       this.offset !== 0 ? formatTimeZoneOffset(this.offset) : undefined;
 
-    return { displayTimestamp, tzName, displayOffset };
+    return { displayDate, tzName, displayOffset };
   }
 
   #makeParts() {
-    const { displayTimestamp, tzName, displayOffset } = this.#getDisplayTime();
-
-    const displayDate = new Date(displayTimestamp);
+    function makeCountdown(value: number) {
+      return html`
+        <span class="countdown"><span style="--value:${value}"></span></span>
+      `;
+    }
 
     /*
      * We deal only with the h12 and h23 hour cycles. In the real world,
      * h11 locales concurrently use h23, and h24 isn't used at all.
      */
 
-    const am = knownLocales[this.locale][1];
-    const pm = knownLocales[this.locale][2];
+    const { displayDate, tzName, displayOffset } = this.#getDisplayTime();
+    const [, am, pm] = knownLocales[this.locale];
     const isH12 = am !== "";
 
     const h23 = displayDate.getUTCHours();
     const hours = isH12 ? h23 % 12 || 12 : h23;
-    const hh = html`
-      <span class="countdown"><span style="--value:${hours}"></span></span>
-    `;
-
     const minutes = displayDate.getUTCMinutes();
-    const mm = html`
-      <span class="countdown"><span style="--value:${minutes}"></span></span>
-    `;
-
     const seconds = displayDate.getUTCSeconds();
-    const ss = html`
-      <span class="countdown"><span style="--value:${seconds}"></span></span>
-    `;
-
-    const amPm = isH12 ? html`${h23 < 12 ? am : pm}` : undefined;
 
     const dateFormat = new Intl.DateTimeFormat(this.locale, kDateFormatOptions);
     const dateString = dateFormat.format(displayDate);
+
+    const hh = makeCountdown(hours);
+    const mm = makeCountdown(minutes);
+    const ss = makeCountdown(seconds);
+    const amPm = isH12 ? html`${h23 < 12 ? am : pm}` : undefined;
     const date = html`${dateString}`;
-
     const tz = html`${tzName}`;
-
-    const offset = displayOffset != null ? html`${displayOffset}` : undefined;
+    const offset = html`${displayOffset}`;
 
     return { hh, mm, ss, amPm, date, tz, offset };
   }
@@ -192,16 +172,11 @@ export class UtcClock extends BaseElement {
       this.ready ? this.#makeParts() : kSkeletons;
 
     const isH12 = amPm != null;
-    const hasOffset = offset != null;
-    const padding = !isH12 && !hasOffset;
-
     const dateWidth = classMap({
       "w-full": !this.ready,
-      "min-w-0": this.ready,
       "max-w-0": this.ready,
     });
     const amPmHidden = classMap({ hidden: !isH12 });
-    const tzPadding = classMap({ "pr-2": padding, "sm:pr-4": padding });
 
     return html`
       <div class="indicator">
@@ -250,10 +225,7 @@ export class UtcClock extends BaseElement {
             ${date}
           </div>
 
-          <div class="flex ${tzPadding} w-full items-center">
-            <span class="grow"></span>
-            <span class="text-xl sm:text-3xl">${tz}${offset}</span>
-          </div>
+          <span class="ml-auto text-xl sm:text-3xl">${tz}${offset}</span>
         </div>
       </div>
     `;
@@ -262,6 +234,6 @@ export class UtcClock extends BaseElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "utc-clock": UtcClock;
+    "transmit-clock": TransmitClock;
   }
 }
