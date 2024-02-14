@@ -54,8 +54,9 @@ export class SettingsModal extends BaseElement {
           <advanced-settings></advanced-settings>
 
           <form class="flex gap-4 items-center mt-8" method="dialog">
-            <div class="grow"></div>
-            <button class="btn" @click=${this.#clickSave}>Save Settings</button>
+            <button class="ml-auto btn" @click=${this.#clickSave}>
+              Save Settings
+            </button>
             <button class="btn">Cancel</button>
           </form>
         </div>

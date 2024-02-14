@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { customElement, query } from "lit/decorators.js";
+import { customElement, query, queryAll } from "lit/decorators.js";
 import BaseElement from "../shared/element";
 import { svgIcons } from "../shared/icons";
 
@@ -11,38 +11,50 @@ export class AboutModal extends BaseElement {
   @query("about-modal input", true)
   private accessor firstInput!: HTMLInputElement;
 
+  @queryAll("about-modal .collapse-content")
+  private accessor contents!: NodeListOf<HTMLDivElement>;
+
   showModal() {
     this.firstInput.checked = true;
     this.dialog.showModal();
   }
 
   #closeModal() {
-    this.firstInput.scrollIntoView();
+    this.firstInput.scrollIntoView({ behavior: "instant" });
+    this.contents.forEach((content) =>
+      content.scroll({ top: 0, left: 0, behavior: "instant" }),
+    );
   }
 
   protected render() {
     return html`
       <dialog class="modal" @close=${this.#closeModal}>
-        <div class="modal-box flex flex-col gap-4 max-w-[90vw]">
+        <div
+          class="modal-box flex flex-col gap-4 w-[90%] [@media(min-height:600px)]:max-h-[calc(100dvh-2rem)] max-w-[calc(100dvw-2rem)]"
+        >
           <form class="flex items-center" method="dialog">
             <h3 class="grow font-bold text-xl sm:text-2xl">About</h3>
 
             <!-- Invisible dummy button takes autofocus when modal is opened -->
             <button></button>
 
-            <button class="btn btn-sm btn-ghost btn-circle">
+            <button class="btn btn-sm btn-ghost p-0">
               <span class="w-8 h-8">${svgIcons.close}</span>
             </button>
           </form>
 
           <div class="overflow-y-auto">
             <div class="join join-vertical max-w-full">
-              <div class="collapse collapse-arrow join-item">
+              <div
+                class="collapse collapse-arrow collapse-arrow-right join-item"
+              >
                 <input name="about-accordion" type="radio" />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Overview
                 </div>
-                <div class="collapse-content text-sm sm:text-base text-pretty">
+                <div
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                >
                   <span class="flex flex-col gap-2">
                     <p>
                       <span class="font-semibold">Time Station Emulator</span>
@@ -69,12 +81,16 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div
+                class="collapse collapse-arrow collapse-arrow-right join-item"
+              >
                 <input name="about-accordion" type="radio" />
                 <div class="collapse-title pl-0 font-bold text-lg">
-                  Operating Principles
+                  Technical Details
                 </div>
-                <div class="collapse-content text-sm sm:text-base text-pretty">
+                <div
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                >
                   <span class="flex flex-col gap-2 min-w-0">
                     <p>
                       <span class="font-semibold">Time Station Emulator</span>
@@ -129,12 +145,16 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div
+                class="collapse collapse-arrow collapse-arrow-right join-item"
+              >
                 <input name="about-accordion" type="radio" />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Quick Start
                 </div>
-                <div class="collapse-content text-sm sm:text-base text-pretty">
+                <div
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                >
                   <span class="flex flex-col gap-2">
                     <p>
                       The following assumes you are using
@@ -210,8 +230,8 @@ export class AboutModal extends BaseElement {
                                 <strong>
                                   Do not place your ears near the speaker
                                 </strong>
-                                to determine volume. Use a visual volume display
-                                instead.
+                                to determine volume. Use a visual volume
+                                indicator instead.
                               </p>
                               <p>
                                 The pitch of the generated waveform is high
@@ -248,28 +268,34 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div
+                class="collapse collapse-arrow collapse-arrow-right join-item"
+              >
                 <input name="about-accordion" type="radio" />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Calculating Offsets
                 </div>
-                <div class="collapse-content text-sm sm:text-base text-pretty">
+                <div
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                >
                   <span class="flex flex-col gap-2">
                     <p>
                       Entering an offset changes the time encoded within the
                       transmitted signal by up to one day in either direction.
-                      This can be used to correct time zone differences or
-                      simply to set a clock (or watch) a few minutes fast/slow.
+                      This is useful for correcting time zone differences as
+                      well as for setting a clock (or watch) a few minutes
+                      fast/slow.
                     </p>
                     <p>
-                      You probably <strong>shouldn&rsquo;t</strong> enter an
-                      offset (or pay too much attention to the transmitted time)
-                      when using this emulator for the first time. After your
-                      clock has been set, the offset is simply the difference
-                      between the time that the clock actually shows and the
-                      time that you want it to show.
+                      You probably
+                      <span class="font-semibold">shouldn&rsquo;t</span> enter
+                      an offset when using this emulator to set your clock for
+                      the first time. Afterwards, the offset is easily
+                      calculated as the difference between the time that the
+                      clock should show and the time that the clock actually
+                      shows. If these are the same, no offset is needed.
                     </p>
-                    <p>Figuring out what it should be in advance is tricky:</p>
+                    <p>Figuring out the offset in advance is often tricky:</p>
                     <ul class="list-disc pl-6">
                       <li>
                         All five time stations broadcast the time relative to a
@@ -298,16 +324,15 @@ export class AboutModal extends BaseElement {
                     <ul class="list-disc pl-6">
                       <li>
                         Sydney observes
-                        <span class="font-semibold">AEST (UTC+1000)</span>.
+                        <span class="font-semibold">AEST (UTC+10:00)</span>.
                       </li>
                       <li>
                         MSF in the UK transmits a
-                        <span class="font-semibold">BST (UTC+0100)</span> time.
+                        <span class="font-semibold">BST (UTC+01:00)</span> time.
                       </li>
                       <li>
                         Sydney is 9 hours ahead of the UK, so the offset is
-                        <span class="font-semibold">+0900</span> (entered as
-                        <span class="font-semibold">+9:00:00.000</span>).
+                        <span class="font-semibold">+09:00</span>.
                       </li>
                     </ul>
                     <p>
@@ -317,15 +342,15 @@ export class AboutModal extends BaseElement {
                     <ul class="list-disc pl-6">
                       <li>
                         Sydney observes
-                        <span class="font-semibold">AEDT (UTC+1100)</span>.
+                        <span class="font-semibold">AEDT (UTC+11:00)</span>.
                       </li>
                       <li>
                         MSF transmits a
-                        <span class="font-semibold">GMT (UTC+0000)</span> time.
+                        <span class="font-semibold">GMT (UTC+00:00)</span> time.
                       </li>
                       <li>
                         The offset is then
-                        <span class="font-semibold">+1100</span>!
+                        <span class="font-semibold">+11:00</span>!
                       </li>
                     </ul>
                   </span>

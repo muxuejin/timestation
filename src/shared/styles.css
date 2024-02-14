@@ -95,6 +95,18 @@
   :root {
     --color-drop-shadow: 0deg 0% 85%;
   }
+
+  ::-webkit-scrollbar {
+    @apply w-1;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-500;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400;
+  }
 }
 
 @layer utilities {
@@ -128,6 +140,11 @@
   .dropdown :where(details[open] > summary.dropdown-arrow):after {
     transform: rotate(225deg);
     margin-top: 0;
+  }
+
+  /* Shift a collapse arrow to the right. */
+  .collapse-arrow-right :where(.collapse > .collapse-title):after {
+    --tw-translate-x: 100%;
   }
 
   /* Outline a daisyUI Join containing input elements with :focus-within. */
