@@ -6,21 +6,20 @@ import { ItemTemplate, repeat } from "lit/directives/repeat.js";
 import BaseElement, { stringArrayConverter } from "../shared/element";
 import { MenuListSelectEvent } from "../shared/events";
 
+export const MenuListPageStep = 6 as const;
+
 @customElement("menu-list")
 export class MenuList extends BaseElement {
-  static pageStep = 6;
-
   @property({ converter: stringArrayConverter, reflect: true })
   accessor classes: string[] = [];
 
   @property({ converter: stringArrayConverter, reflect: true })
   accessor itemClasses: string[] = [];
 
-  @property({ type: String, reflect: true })
-  accessor listId = "";
-
   @property({ type: Boolean, reflect: true })
-  accessor spaceSelects = false;
+  accessor spaceSelect = false;
+
+  group = "";
 
   itemTemplate?: ItemTemplate<string>;
 
@@ -44,17 +43,14 @@ export class MenuList extends BaseElement {
   #itemRef: Record<string, Ref<HTMLLIElement>> = {};
 
   set enabledItems(items: string[] | undefined) {
-    if (items != null) {
-      this.#enabledItems = items.filter((item) =>
-        Object.hasOwn(this.#itemIndex, item),
+    this.#enabledItems =
+      items == null ? undefined : (
+        items.filter((item) => Object.hasOwn(this.#itemIndex, item))
       );
-      this.#enabledItemIndex = Object.fromEntries(
-        this.#enabledItems.map((item, i) => [item, i]),
+    this.#enabledItemIndex =
+      items == null ? undefined : (
+        Object.fromEntries(this.#enabledItems!.map((item, i) => [item, i]))
       );
-    } else {
-      this.#enabledItems = undefined;
-      this.#enabledItemIndex = undefined;
-    }
     this.index = 0;
   }
 
@@ -96,7 +92,7 @@ export class MenuList extends BaseElement {
 
   #mousedown(item: string) {
     this.item = item;
-    this.publish(MenuListSelectEvent, this.listId, item);
+    if (this.group !== "") this.publish(MenuListSelectEvent, this.group, item);
   }
 
   #scrollToCurrentItem() {
@@ -131,10 +127,10 @@ export class MenuList extends BaseElement {
         i++;
         break;
       case "PageUp":
-        i = Math.max(0, i - MenuList.pageStep);
+        i = Math.max(0, i - MenuListPageStep);
         break;
       case "PageDown":
-        i = Math.min(lastIndex, i + MenuList.pageStep);
+        i = Math.min(lastIndex, i + MenuListPageStep);
         break;
       case "Home":
         i = 0;
@@ -145,7 +141,7 @@ export class MenuList extends BaseElement {
       case "Enter":
       case "Tab":
       case " ":
-        if (key === " " && !this.spaceSelects) return;
+        if (key === " " && !this.spaceSelect) return;
         this.#mousedown(this.enabledItems[i]);
         break;
       default:

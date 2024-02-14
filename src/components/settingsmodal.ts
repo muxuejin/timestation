@@ -3,6 +3,10 @@ import { customElement, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement from "../shared/element";
 import { SettingsEvent, SettingsReadyEvent } from "../shared/events";
+import "./advancedsettings";
+import "./localesettings";
+import "./offsetsettings";
+import "./stationsettings";
 
 @customElement("settings-modal")
 export class SettingsModal extends BaseElement {

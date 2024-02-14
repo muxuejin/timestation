@@ -4,11 +4,11 @@ const kSupportedLocales = new Set(supportedLocales);
 
 const kStations = ["BPC", "DCF77", "JJY", "MSF", "WWVB"] as const;
 export type Station = (typeof kStations)[number];
-export const stations: readonly Station[] = [...kStations] as const;
+export const knownStations: readonly Station[] = [...kStations] as const;
 
 const kJjyKhz = [40, 60] as const;
 export type JjyKhz = (typeof kJjyKhz)[number];
-export const jjyKhz: readonly JjyKhz[] = [...kJjyKhz] as const;
+export const knownJjyKhz: readonly JjyKhz[] = [...kJjyKhz] as const;
 
 const kAppSettings = [
   "station",
@@ -24,9 +24,9 @@ export type AppSetting = (typeof kAppSettings)[number];
 export const appSettings: readonly AppSetting[] = [...kAppSettings] as const;
 
 const kValidators: Record<AppSetting, (x: any) => boolean> = {
-  station: (x: any) => stations.includes(x),
+  station: (x: any) => knownStations.includes(x),
   locale: (x: any) => kSupportedLocales.has(x),
-  jjyKhz: (x: any) => jjyKhz.includes(x),
+  jjyKhz: (x: any) => knownJjyKhz.includes(x),
   offset: (x: any) => Number.isSafeInteger(x) && x > -86400000 && x < 86400000,
   dut1: (x: any) => Number.isSafeInteger(x) && x > -1000 && x < 1000,
   noclip: (x: any) => typeof x === "boolean",
@@ -34,7 +34,7 @@ const kValidators: Record<AppSetting, (x: any) => boolean> = {
   dark: (x: any) => typeof x === "boolean",
 } as const;
 
-type AppSettingType = {
+export type AppSettingType = {
   station: Station;
   locale: string;
   jjyKhz: JjyKhz;
@@ -44,6 +44,7 @@ type AppSettingType = {
   sync: boolean;
   dark: boolean;
 };
+
 const kDefaultAppSettings: AppSettingType = {
   station: "WWVB",
   locale: defaultLocale,

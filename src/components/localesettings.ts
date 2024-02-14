@@ -3,13 +3,17 @@ import { customElement, property, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
-  LocaleSettingEvent,
+  LocaleSettingsEvent,
   ReadyBusyEvent,
   SettingsEvent,
 } from "../shared/events";
+import { LocaleSettingsGroup } from "../shared/groups";
 import { defaultLocale, knownLocales } from "../shared/locales";
+import "./arrowdropdown";
 import { ArrowDropdown } from "./arrowdropdown";
-import { kLocaleSearchboxGroup } from "./localesearchbox";
+import "./collapsesetting";
+import "./infodropdown";
+import "./localesearchbox";
 
 @customElement("locale-settings")
 export class LocaleSettings extends BaseElement {
@@ -30,7 +34,7 @@ export class LocaleSettings extends BaseElement {
     if (ready) this.#getSettings();
   }
 
-  @registerEventHandler(LocaleSettingEvent)
+  @registerEventHandler(LocaleSettingsEvent)
   handleLocaleSetting(value: string) {
     this.locale = value;
     this.#closeCollapse();
@@ -38,7 +42,7 @@ export class LocaleSettings extends BaseElement {
 
   #getSettings() {
     this.locale = AppSettings.get("locale");
-    this.publish(LocaleSettingEvent, this.locale);
+    this.publish(LocaleSettingsEvent, this.locale);
   }
 
   #saveSettings() {
@@ -71,13 +75,13 @@ export class LocaleSettings extends BaseElement {
 
           <arrow-dropdown
             classes="flex-nowrap after:shrink-0"
-            .group=${kLocaleSearchboxGroup}
+            .group=${LocaleSettingsGroup}
             .text=${html`${displayName}`}
           ></arrow-dropdown>
         </div>
 
         <collapse-setting
-          .group=${kLocaleSearchboxGroup}
+          .group=${LocaleSettingsGroup}
           .content=${html`<locale-searchbox></locale-searchbox>`}
         >
         </collapse-setting>

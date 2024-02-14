@@ -3,9 +3,10 @@ import { customElement, query, state } from "lit/decorators.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
   ArrowDropdownEvent,
-  LocaleSettingEvent,
+  LocaleSettingsEvent,
   MenuListSelectEvent,
 } from "../shared/events";
+import { LocaleSettingsGroup } from "../shared/groups";
 import LocaleEditDistance from "../shared/localeeditdistance";
 import {
   defaultLocale,
@@ -13,9 +14,8 @@ import {
   maxLocaleNameCodeUnits,
   supportedLocales,
 } from "../shared/locales";
+import "./menulist";
 import { MenuList } from "./menulist";
-
-export const kLocaleSearchboxGroup = "LocaleSearchbox" as const;
 
 @customElement("locale-searchbox")
 export class LocaleSearchbox extends BaseElement {
@@ -32,18 +32,18 @@ export class LocaleSearchbox extends BaseElement {
 
   @registerEventHandler(ArrowDropdownEvent)
   handleArrowDropdown(group: string, value: boolean) {
-    if (group === kLocaleSearchboxGroup && value) this.#clearInput();
+    if (group === LocaleSettingsGroup && value) this.#clearInput();
     if (!value) this.#isSuggestionsMousedown = false;
   }
 
-  @registerEventHandler(LocaleSettingEvent)
+  @registerEventHandler(LocaleSettingsEvent)
   handleLocaleSetting(value: string) {
     this.locale = value;
   }
 
   @registerEventHandler(MenuListSelectEvent)
-  handleMenuListSelect(listId: string, tag: string) {
-    if (listId === kLocaleSearchboxGroup) this.publish(LocaleSettingEvent, tag);
+  handleMenuListSelect(group: string, tag: string) {
+    if (group === LocaleSettingsGroup) this.publish(LocaleSettingsEvent, tag);
   }
 
   connectedCallback() {
@@ -76,7 +76,7 @@ export class LocaleSearchbox extends BaseElement {
   }
 
   #resetLocale() {
-    this.publish(LocaleSettingEvent, defaultLocale);
+    this.publish(LocaleSettingsEvent, defaultLocale);
   }
 
   #mousedownSuggestions() {
@@ -141,7 +141,7 @@ export class LocaleSearchbox extends BaseElement {
       <menu-list
         classes="menu flex-nowrap drop-shadow z-[1] mt-1 pt-0 w-full bg-base-200 absolute max-h-[13.5rem] overflow-auto rounded-box rounded-t-none"
         itemclasses="flex"
-        .listId=${kLocaleSearchboxGroup}
+        .group=${LocaleSettingsGroup}
         .itemTemplate=${this.#makeSuggestion}
         @mousedown=${this.#mousedownSuggestions}
       ></menu-list>

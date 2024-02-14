@@ -4,7 +4,10 @@ import { classMap } from "lit/directives/class-map.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent } from "../shared/events";
 import { svgIcons } from "../shared/icons";
+import "./aboutmodal";
 import { AboutModal } from "./aboutmodal";
+import "./darktoggle";
+import "./settingsmodal";
 import { SettingsModal } from "./settingsmodal";
 
 @customElement("nav-bar")

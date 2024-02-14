@@ -3,9 +3,11 @@ import { customElement, property, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
+import { AdvancedSettingsGroup } from "../shared/groups";
+import "./arrowdropdown";
 import { ArrowDropdown } from "./arrowdropdown";
-
-const kAdvancedSettingsGroup = "AdvancedSettings" as const;
+import "./collapsesetting";
+import "./infodropdown";
 
 @customElement("advanced-settings")
 export class AdvancedSettings extends BaseElement {
@@ -55,12 +57,12 @@ export class AdvancedSettings extends BaseElement {
 
           <arrow-dropdown
             classes="flex-nowrap after:shrink-0"
-            .group=${kAdvancedSettingsGroup}
+            .group=${AdvancedSettingsGroup}
           ></arrow-dropdown>
         </div>
 
         <collapse-setting
-          .group=${kAdvancedSettingsGroup}
+          .group=${AdvancedSettingsGroup}
           .content=${html`
             <div class="flex flex-col gap-4 mt-4 ml-2">
               <div class="flex items-center h-12">

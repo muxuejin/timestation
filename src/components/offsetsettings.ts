@@ -3,17 +3,20 @@ import { customElement, property, query } from "lit/decorators.js";
 import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
+import { OffsetSettingsGroup } from "../shared/groups";
 import { decodeHtmlEntity } from "../shared/strings";
 import { decomposeOffset } from "../shared/time";
+import "./arrowdropdown";
 import { ArrowDropdown } from "./arrowdropdown";
+import "./collapsesetting";
+import "./numericinput";
 import { NumericInput } from "./numericinput";
+import "./signbutton";
 import { SignButton } from "./signbutton";
-
-const kOffsetSettingsGroup = "OffsetSettings";
 
 @customElement("offset-settings")
 export class OffsetSettings extends BaseElement {
-  @property({ type: Number })
+  @property({ type: Number, reflect: true })
   accessor offset = 0;
 
   @query("offset-settings arrow-dropdown", true)
@@ -117,7 +120,7 @@ export class OffsetSettings extends BaseElement {
               min="0"
               max="23"
               @blur=${this.#requestUpdate}
-              .group=${kOffsetSettingsGroup}
+              .group=${OffsetSettingsGroup}
             ></numeric-input>
           </span>
 
@@ -129,7 +132,7 @@ export class OffsetSettings extends BaseElement {
               min="0"
               max="59"
               @blur=${this.#requestUpdate}
-              .group=${kOffsetSettingsGroup}
+              .group=${OffsetSettingsGroup}
             ></numeric-input>
           </span>
 
@@ -141,7 +144,7 @@ export class OffsetSettings extends BaseElement {
               min="0"
               max="59"
               @blur=${this.#requestUpdate}
-              .group=${kOffsetSettingsGroup}
+              .group=${OffsetSettingsGroup}
             ></numeric-input>
           </span>
 
@@ -153,7 +156,7 @@ export class OffsetSettings extends BaseElement {
               min="0"
               max="999"
               @blur=${this.#requestUpdate}
-              .group=${kOffsetSettingsGroup}
+              .group=${OffsetSettingsGroup}
             ></numeric-input>
           </span>
 
@@ -186,16 +189,17 @@ export class OffsetSettings extends BaseElement {
               Time offset up to &pm;1 day. Use to correct minor errors.
             </span>
           `}
+          grow
         ></info-dropdown>
 
         <arrow-dropdown
-          .group=${kOffsetSettingsGroup}
+          .group=${OffsetSettingsGroup}
           .text=${html`${displayOffset}`}
         ></arrow-dropdown>
       </div>
 
       <collapse-setting
-        .group=${kOffsetSettingsGroup}
+        .group=${OffsetSettingsGroup}
         .content=${collapseContent}
       >
       </collapse-setting>

@@ -1,5 +1,11 @@
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
+import "./components/animatedbackground";
+import "./components/indicatoricon";
+import "./components/infodropdown";
+import "./components/navbar";
+import "./components/startstopbutton";
+import "./components/transmitclock";
 import AppSettings from "./shared/appsettings";
 import BaseElement, { registerEventHandler } from "./shared/element";
 import {
@@ -10,28 +16,7 @@ import {
   TimeSignalReadyEvent,
 } from "./shared/events";
 import serverTimeTask from "./shared/servertime";
-
 import "./shared/styles.css";
-
-import "./components/aboutmodal";
-import "./components/advancedsettings";
-import "./components/animatedbackground";
-import "./components/arrowdropdown";
-import "./components/collapsesetting";
-import "./components/darktoggle";
-import "./components/indicatoricon";
-import "./components/infodropdown";
-import "./components/localesearchbox";
-import "./components/localesettings";
-import "./components/menulist";
-import "./components/navbar";
-import "./components/numericinput";
-import "./components/offsetsettings";
-import "./components/settingsmodal";
-import "./components/signbutton";
-import "./components/startstopbutton";
-import "./components/stationsettings";
-import "./components/transmitclock";
 
 @customElement("time-signal")
 export class TimeSignal extends BaseElement {

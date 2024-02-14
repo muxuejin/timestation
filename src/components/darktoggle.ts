@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { customElement, state, query } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { svgIcons } from "../shared/icons";
 import AppSettings from "../shared/appsettings";
@@ -7,8 +7,8 @@ import { ReadyBusyEvent } from "../shared/events";
 
 @customElement("dark-toggle")
 export class DarkToggle extends BaseElement {
-  @state()
-  private accessor dark = AppSettings.get("dark");
+  @property({ type: Boolean, reflect: true })
+  accessor dark = AppSettings.get("dark");
 
   @query("dark-toggle input.theme-controller", true)
   private accessor checkbox!: HTMLInputElement;

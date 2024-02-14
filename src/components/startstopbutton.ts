@@ -1,13 +1,17 @@
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+import AppSettings, {
+  Station,
+  knownJjyKhz,
+  knownStations,
+} from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
   ReadyBusyEvent,
   ServerOffsetEvent,
   TimeSignalStateChangeEvent,
 } from "../shared/events";
-import AppSettings, { Station, jjyKhz, stations } from "../shared/appsettings";
 import RadioTimeSignal from "../shared/radiotimesignal";
 
 const kStartStopButtonText = {
@@ -53,8 +57,8 @@ export class StartStopButton extends BaseElement {
   #start() {
     const { station, jjyKhz: khz, offset, dut1, noclip } = AppSettings.getAll();
     RadioTimeSignal.start({
-      stationIndex: stations.indexOf(station),
-      jjyKhzIndex: jjyKhz.indexOf(khz),
+      stationIndex: knownStations.indexOf(station),
+      jjyKhzIndex: knownJjyKhz.indexOf(khz),
       offset: offset + this.#serverOffset,
       dut1,
       noclip,

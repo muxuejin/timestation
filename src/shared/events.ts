@@ -1,6 +1,6 @@
 export const ArrowDropdownEvent = "ArrowDropdown" as const;
 export const EditDistanceReadyEvent = "EditDistanceReady" as const;
-export const LocaleSettingEvent = "LocaleSetting" as const;
+export const LocaleSettingsEvent = "LocaleSettings" as const;
 export const MenuListSelectEvent = "MenuListSelect" as const;
 export const ReadyBusyEvent = "ReadyBusy" as const;
 export const ServerTimeReadyEvent = "ServerTimeReady" as const;

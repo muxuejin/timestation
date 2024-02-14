@@ -4,8 +4,8 @@ import { classMap } from "lit/directives/class-map.js";
 import AppSettings, {
   JjyKhz,
   Station,
-  jjyKhz,
-  stations,
+  knownJjyKhz,
+  knownStations,
 } from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import {
@@ -14,10 +14,16 @@ import {
   ReadyBusyEvent,
   SettingsEvent,
 } from "../shared/events";
+import { StationSettingsGroup } from "../shared/groups";
 import { svgFlags } from "../shared/icons";
+import "./arrowdropdown";
 import { ArrowDropdown } from "./arrowdropdown";
+import "./collapsesetting";
+import "./menulist";
 import { MenuList } from "./menulist";
+import "./numericinput";
 import { NumericInput } from "./numericinput";
+import "./signbutton";
 import { SignButton } from "./signbutton";
 
 const kStationIcons: Record<Station, HTMLTemplateResult> = {
@@ -27,8 +33,6 @@ const kStationIcons: Record<Station, HTMLTemplateResult> = {
   MSF: svgFlags.uk,
   WWVB: svgFlags.us,
 } as const;
-
-const kStationSettingsGroup = "StationSettings" as const;
 
 @customElement("station-settings")
 export class StationSettings extends BaseElement {
@@ -67,8 +71,8 @@ export class StationSettings extends BaseElement {
   }
 
   @registerEventHandler(MenuListSelectEvent)
-  handleMenuListSelect(listId: string, station: string) {
-    if (listId === kStationSettingsGroup) {
+  handleMenuListSelect(group: string, station: string) {
+    if (group === StationSettingsGroup) {
       this.station = station as Station;
       this.#closeArrowDropdown();
     }
@@ -160,7 +164,7 @@ export class StationSettings extends BaseElement {
       <h4 class="grow font-semibold sm:text-lg">Frequency</h4>
 
       <div class="join">
-        ${jjyKhz.map(
+        ${knownJjyKhz.map(
           (kHz) => html`
             <input
               class="join-item btn ms-0 w-18"
@@ -197,10 +201,10 @@ export class StationSettings extends BaseElement {
      * the events that open it only when the station is MSF, JJY, or WWVB.
      */
     const isOpen = hasDut1 || hasJjyKhz;
-    this.publish(ArrowDropdownEvent, kStationSettingsGroup, isOpen);
+    this.publish(ArrowDropdownEvent, StationSettingsGroup, isOpen);
 
     if (this.#isRendered && this.stationList.items.length === 0) {
-      this.stationList.items = [...stations];
+      this.stationList.items = [...knownStations];
       this.stationList.item = this.station;
     }
 
@@ -223,17 +227,17 @@ export class StationSettings extends BaseElement {
               <menu-list
                 classes="dropdown-content menu mt-1 pt-1 w-36 drop-shadow z-[1] bg-base-200 rounded-box"
                 itemclasses="gap-4 px-2"
-                .listId=${kStationSettingsGroup}
+                .group=${StationSettingsGroup}
                 .itemTemplate=${this.#makeStationListItem}
                 .item=${this.station}
-                spaceSelects
+                spaceselect
               ></menu-list>
             `}
           ></arrow-dropdown>
         </div>
 
         <collapse-setting
-          .group=${kStationSettingsGroup}
+          .group=${StationSettingsGroup}
           .content=${html`
             <div class="h-12 mt-4 ml-2">
               <span class="flex items-center ${hideDut1}">
