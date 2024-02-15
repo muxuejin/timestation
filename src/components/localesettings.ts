@@ -76,7 +76,7 @@ export class LocaleSettings extends BaseElement {
           <arrow-dropdown
             classes="flex-nowrap after:shrink-0"
             .group=${LocaleSettingsGroup}
-            .text=${html`${displayName}`}
+            .text=${displayName}
           ></arrow-dropdown>
         </div>
 

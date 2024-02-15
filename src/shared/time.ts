@@ -1,3 +1,5 @@
+const kMinus = "\u{2212}" as const;
+
 export default function monotonicTime(offset?: number) {
   return performance.timeOrigin + performance.now() + (offset ?? 0);
 }
@@ -31,7 +33,7 @@ export function formatTimeZoneOffset(offset: number) {
   const mm = Math.trunc(absOffset / (60 * 1000)) % 60;
   const hh = Math.trunc(absOffset / (60 * 60 * 1000));
 
-  let tzOffset = offset < 0 ? "-" : "+";
+  let tzOffset = offset < 0 ? kMinus : "+";
   tzOffset += `${hh.toString().padStart(2, "0")}:`;
   tzOffset += `${mm.toString().padStart(2, "0")}`;
   if (ss !== 0 || ms !== 0) tzOffset += `:${ss.toString().padStart(2, "0")}`;

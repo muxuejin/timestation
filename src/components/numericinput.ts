@@ -4,8 +4,8 @@ import { classMap } from "lit/directives/class-map.js";
 import { live } from "lit/directives/live.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import BaseElement, { stringArrayConverter } from "../shared/element";
-import { decodeHtmlEntity } from "../shared/strings";
 
+const kNdash = "\u{2013}" as const;
 const kNumericRe = /^-?\d+$/;
 
 @customElement("numeric-input")
@@ -132,7 +132,7 @@ export class NumericInput extends BaseElement {
     return html`
       <span
         class="tooltip tooltip-error tooltip-open before:[&:not(:has(input:invalid))]:opacity-0 after:[&:not(:has(input:invalid))]:opacity-0"
-        data-tip=${`${this.min}${decodeHtmlEntity("&ndash;")}${this.max}`}
+        data-tip=${`${this.min}${kNdash}${this.max}`}
       >
         <input
           ${ref(this.#ref)}

@@ -1,6 +1,5 @@
 import caseFoldingMap from "./casefoldingmap";
 
-const kHtmlEntityRe = /^(?:&[A-Za-z]+|[A-Za-z]?#\d+);$/;
 const kDiacritics = /[\u{0300}-\u{036f}]/gu;
 const kScriptRangeMap = {
   arabic: /[\u{0600}-\u{06ff}]/u,
@@ -67,11 +66,4 @@ export function foldUnicodeString(str: string) {
 export function findScriptsInString(str: string) {
   const scripts = Object.keys(kScriptRangeMap) as UnicodeScript[];
   return scripts.filter((script) => kScriptRangeMap[script].test(str));
-}
-
-export function decodeHtmlEntity(entity: string) {
-  if (!kHtmlEntityRe.test(entity)) return "";
-  const textArea = document.createElement("textarea");
-  textArea.innerHTML = entity;
-  return textArea.innerText;
 }

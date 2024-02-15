@@ -1,7 +1,8 @@
 import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { createRef, ref } from "lit/directives/ref.js";
 import { classMap } from "lit/directives/class-map.js";
+import { createRef, ref } from "lit/directives/ref.js";
+import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import BaseElement, { stringArrayConverter } from "../shared/element";
 import { ArrowDropdownEvent } from "../shared/events";
 
@@ -12,7 +13,7 @@ export class ArrowDropdown extends BaseElement {
 
   group = "";
 
-  set text(value: ReturnType<typeof html>) {
+  set text(value: ReturnType<typeof html> | string) {
     this.#text = value;
     this.requestUpdate();
   }
@@ -21,7 +22,7 @@ export class ArrowDropdown extends BaseElement {
     return this.#text;
   }
 
-  #text = html``;
+  #text: ReturnType<typeof html> | string = "";
 
   #dropdownRef = createRef<HTMLDetailsElement>();
 
@@ -84,7 +85,7 @@ export class ArrowDropdown extends BaseElement {
             capture: true,
           }}
         >
-          ${this.text}
+          ${typeof this.text === "string" ? unsafeHTML(this.text) : this.text}
         </summary>
 
         ${this.content}

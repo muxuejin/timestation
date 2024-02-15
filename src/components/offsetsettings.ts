@@ -4,7 +4,6 @@ import AppSettings from "../shared/appsettings";
 import BaseElement, { registerEventHandler } from "../shared/element";
 import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
 import { OffsetSettingsGroup } from "../shared/groups";
-import { decodeHtmlEntity } from "../shared/strings";
 import { decomposeOffset } from "../shared/time";
 import "./arrowdropdown";
 import { ArrowDropdown } from "./arrowdropdown";
@@ -44,8 +43,7 @@ export class OffsetSettings extends BaseElement {
     const { negative, hh, mm, ss, ms } = decomposeOffset(offset);
     if (hh === 0 && mm === 0 && ss === 0 && ms === 0) return "No offset";
 
-    const sign =
-      negative ? decodeHtmlEntity("&minus;") : decodeHtmlEntity("&plus;");
+    const sign = negative ? "&minus;" : "+";
     const hhText = `${hh}`.padStart(2, "0");
     const mmText = `${mm}`.padStart(2, "0");
     const ssText = `${ss}`.padStart(2, "0");
@@ -194,7 +192,7 @@ export class OffsetSettings extends BaseElement {
 
         <arrow-dropdown
           .group=${OffsetSettingsGroup}
-          .text=${html`${displayOffset}`}
+          .text=${displayOffset}
         ></arrow-dropdown>
       </div>
 
