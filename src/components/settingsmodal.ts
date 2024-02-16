@@ -27,6 +27,10 @@ export class SettingsModal extends BaseElement {
     this.publish(SettingsEvent, "save");
   }
 
+  #clickReset() {
+    AppSettings.reset();
+  }
+
   protected render() {
     return html`
       <dialog
@@ -42,7 +46,7 @@ export class SettingsModal extends BaseElement {
 
             <button
               class="btn btn-sm btn-ghost hover:bg-transparent"
-              @click=${AppSettings.reset}
+              @click=${this.#clickReset}
             >
               Reset All
             </button>

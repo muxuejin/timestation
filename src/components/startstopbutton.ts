@@ -55,13 +55,12 @@ export class StartStopButton extends BaseElement {
   }
 
   #start() {
-    const { station, jjyKhz: khz, offset, dut1, noclip } = AppSettings.getAll();
     RadioTimeSignal.start({
-      stationIndex: knownStations.indexOf(station),
-      jjyKhzIndex: knownJjyKhz.indexOf(khz),
-      offset: offset + this.#serverOffset,
-      dut1,
-      noclip,
+      stationIndex: knownStations.indexOf(AppSettings.get("station")),
+      jjyKhzIndex: knownJjyKhz.indexOf(AppSettings.get("jjyKhz")),
+      offset: AppSettings.get("offset") + this.#serverOffset,
+      dut1: AppSettings.get("dut1"),
+      noclip: AppSettings.get("noclip"),
     });
   }
 

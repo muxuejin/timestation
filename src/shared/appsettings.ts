@@ -21,7 +21,9 @@ const kAppSettings = [
   "dark",
 ] as const;
 export type AppSetting = (typeof kAppSettings)[number];
-export const appSettings: readonly AppSetting[] = [...kAppSettings] as const;
+export const knownAppSettings: readonly AppSetting[] = [
+  ...kAppSettings,
+] as const;
 
 const kValidators: Record<AppSetting, (x: any) => boolean> = {
   station: (x: any) => knownStations.includes(x),
@@ -45,7 +47,7 @@ export type AppSettingType = {
   dark: boolean;
 };
 
-const kDefaultAppSettings: AppSettingType = {
+export const defaultAppSettings: AppSettingType = {
   station: "WWVB",
   locale: defaultLocale,
   jjyKhz: 40,
@@ -105,7 +107,7 @@ function hasLocalStorage() {
 class AppSettings {
   static #instance: AppSettings;
 
-  #settings: AppSettingType;
+  #settings: AppSettingType = { ...defaultAppSettings };
 
   #hasLocalStorage = hasLocalStorage();
 
@@ -113,44 +115,30 @@ class AppSettings {
     if (AppSettings.#instance != null)
       throw new Error("AppSettings is a singleton class.");
     AppSettings.#instance = this;
-
-    if (this.#hasLocalStorage)
-      this.#settings = Object.fromEntries(
-        Object.entries(kDefaultAppSettings).map(([name, defaultValue]) => {
-          const setting = name as AppSetting;
-          const storedValue = window.localStorage.getItem(setting) ?? undefined;
-          const value = convertStoredValue(setting, storedValue);
-          const isValid = value != null && isValueValid(setting, value);
-          return [setting, isValid ? value : defaultValue];
-        }),
-      ) as AppSettingType;
-    else this.#settings = { ...kDefaultAppSettings };
   }
 
   set<T extends AppSetting>(setting: T, value: AppSettingType[T]) {
     if (!isValueValid(setting, value))
-      throw new Error(`"${value}" is an invalid ${setting}`);
+      throw new Error(`"${value}" is an invalid value for ${setting}.`);
     if (this.#hasLocalStorage) window.localStorage.setItem(setting, `${value}`);
-    this.#settings[setting] = value;
+    else this.#settings[setting] = value;
   }
 
   get<T extends AppSetting>(setting: T): AppSettingType[T] {
-    let value = this.#settings[setting];
-    if (!isValueValid(setting, value)) {
-      value = kDefaultAppSettings[setting];
+    if (!this.#hasLocalStorage) return this.#settings[setting];
+
+    const storedValue = window.localStorage.getItem(setting) ?? undefined;
+    let value = convertStoredValue(setting, storedValue);
+    if (value == null || !isValueValid(setting, value)) {
+      value = defaultAppSettings[setting];
       this.set(setting, value);
     }
     return value;
   }
 
-  getAll(): AppSettingType {
-    return { ...this.#settings };
-  }
-
   reset() {
-    Object.entries(kDefaultAppSettings).forEach(([setting, defaultValue]) => {
-      this.set(setting as AppSetting, defaultValue);
-    });
+    if (this.#hasLocalStorage) window.localStorage.clear();
+    else this.#settings = { ...defaultAppSettings };
   }
 }
 
