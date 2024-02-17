@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
-import EventBus from "./eventbus";
-import { ServerOffsetEvent, ServerTimeReadyEvent } from "./events";
+import EventBus from "@shared/eventbus";
+import { ServerOffsetEvent, ServerTimeReadyEvent } from "@shared/events";
 
 export type ServerOffsetEstimate = {
   serverOffset: number | undefined;
@@ -24,7 +24,7 @@ class ServerTimeTask {
 
   constructor() {
     this.#worker = new Worker(
-      new URL("./servertimeworker.ts", import.meta.url),
+      new URL("@shared/servertimeworker.ts", import.meta.url),
       { type: "module" },
     );
     this.#worker.addEventListener("message", this.#handleWorkerMessage);

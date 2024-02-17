@@ -1,13 +1,14 @@
-import createEditDistanceModule from "../../wasm/editdistance.js";
-import EventBus from "./eventbus";
-import { EditDistanceReadyEvent } from "./events";
+import EventBus from "@shared/eventbus";
+import { EditDistanceReadyEvent } from "@shared/events";
 import {
   knownLocales,
   sortLocales,
   supportedLocales,
   supportedScripts,
-} from "./locales";
-import { findScriptsInString, foldUnicodeString } from "./strings";
+} from "@shared/locales";
+import { findScriptsInString, foldUnicodeString } from "@shared/strings";
+
+import createEditDistanceModule from "../../wasm/editdistance.js";
 
 interface EditDistanceModule extends EmscriptenModule {
   _edist_get_buf_ptr(): number;

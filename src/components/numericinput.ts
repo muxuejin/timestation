@@ -3,7 +3,8 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { live } from "lit/directives/live.js";
 import { createRef, ref } from "lit/directives/ref.js";
-import BaseElement, { stringArrayConverter } from "../shared/element";
+
+import BaseElement, { stringArrayConverter } from "@shared/element";
 
 const kNdash = "\u{2013}" as const;
 const kNumericRe = /^-?\d+$/;

@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-await-in-loop */
 
-import { ServerOffsetEstimate, ServerTimeParams } from "./servertime";
-import monotonicTime from "./time";
+import { ServerOffsetEstimate, ServerTimeParams } from "@shared/servertime";
+import monotonicTime from "@shared/time";
 
 type ServerTimeResponse = {
   serverSec: number;

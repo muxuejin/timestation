@@ -1,22 +1,24 @@
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
-import "./components/animatedbackground";
-import "./components/indicatoricon";
-import "./components/infodropdown";
-import "./components/navbar";
-import "./components/startstopbutton";
-import "./components/transmitclock";
-import AppSettings from "./shared/appsettings";
-import BaseElement, { registerEventHandler } from "./shared/element";
+
+import "@components/animatedbackground";
+import "@components/indicatoricon";
+import "@components/infodropdown";
+import "@components/navbar";
+import "@components/startstopbutton";
+import "@components/transmitclock";
+
+import AppSettings from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
 import {
   EditDistanceReadyEvent,
   ReadyBusyEvent,
   ServerTimeReadyEvent,
   SettingsReadyEvent,
   TimeSignalReadyEvent,
-} from "./shared/events";
-import serverTimeTask from "./shared/servertime";
-import "./shared/styles.css";
+} from "@shared/events";
+import serverTimeTask from "@shared/servertime";
+import "@shared/styles.css";
 
 @customElement("time-signal")
 export class TimeSignal extends BaseElement {

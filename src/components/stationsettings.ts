@@ -1,30 +1,32 @@
 import { HTMLTemplateResult, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+
+import "@components/arrowdropdown";
+import { ArrowDropdown } from "@components/arrowdropdown";
+import "@components/collapsesetting";
+import "@components/menulist";
+import { MenuList } from "@components/menulist";
+import "@components/numericinput";
+import { NumericInput } from "@components/numericinput";
+import "@components/signbutton";
+import { SignButton } from "@components/signbutton";
+
 import AppSettings, {
   JjyKhz,
   Station,
   knownJjyKhz,
   knownStations,
-} from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
+} from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
 import {
   ArrowDropdownEvent,
   MenuListSelectEvent,
   ReadyBusyEvent,
   SettingsEvent,
-} from "../shared/events";
-import { StationSettingsGroup } from "../shared/groups";
-import { svgFlags } from "../shared/icons";
-import "./arrowdropdown";
-import { ArrowDropdown } from "./arrowdropdown";
-import "./collapsesetting";
-import "./menulist";
-import { MenuList } from "./menulist";
-import "./numericinput";
-import { NumericInput } from "./numericinput";
-import "./signbutton";
-import { SignButton } from "./signbutton";
+} from "@shared/events";
+import { StationSettingsGroup } from "@shared/groups";
+import { svgFlags } from "@shared/icons";
 
 const kStationIcons: Record<Station, HTMLTemplateResult> = {
   BPC: svgFlags.cn,

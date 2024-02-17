@@ -1,13 +1,15 @@
 import { html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import AppSettings from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
-import { AdvancedSettingsGroup } from "../shared/groups";
-import "./arrowdropdown";
-import { ArrowDropdown } from "./arrowdropdown";
-import "./collapsesetting";
-import "./infodropdown";
+
+import "@components/arrowdropdown";
+import { ArrowDropdown } from "@components/arrowdropdown";
+import "@components/collapsesetting";
+import "@components/infodropdown";
+
+import AppSettings from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent, SettingsEvent } from "@shared/events";
+import { AdvancedSettingsGroup } from "@shared/groups";
 
 @customElement("advanced-settings")
 export class AdvancedSettings extends BaseElement {

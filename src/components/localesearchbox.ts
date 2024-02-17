@@ -1,21 +1,23 @@
 import { html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import BaseElement, { registerEventHandler } from "../shared/element";
+
+import "@components/menulist";
+import { MenuList } from "@components/menulist";
+
+import BaseElement, { registerEventHandler } from "@shared/element";
 import {
   ArrowDropdownEvent,
   LocaleSettingsEvent,
   MenuListSelectEvent,
-} from "../shared/events";
-import { LocaleSettingsGroup } from "../shared/groups";
-import LocaleEditDistance from "../shared/localeeditdistance";
+} from "@shared/events";
+import { LocaleSettingsGroup } from "@shared/groups";
+import LocaleEditDistance from "@shared/localeeditdistance";
 import {
   defaultLocale,
   knownLocales,
   maxLocaleNameCodeUnits,
   supportedLocales,
-} from "../shared/locales";
-import "./menulist";
-import { MenuList } from "./menulist";
+} from "@shared/locales";
 
 @customElement("locale-searchbox")
 export class LocaleSearchbox extends BaseElement {

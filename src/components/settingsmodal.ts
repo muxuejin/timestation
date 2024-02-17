@@ -1,12 +1,14 @@
 import { html } from "lit";
 import { customElement, query } from "lit/decorators.js";
-import AppSettings from "../shared/appsettings";
-import BaseElement from "../shared/element";
-import { SettingsEvent, SettingsReadyEvent } from "../shared/events";
-import "./advancedsettings";
-import "./localesettings";
-import "./offsetsettings";
-import "./stationsettings";
+
+import "@components/advancedsettings";
+import "@components/localesettings";
+import "@components/offsetsettings";
+import "@components/stationsettings";
+
+import AppSettings from "@shared/appsettings";
+import BaseElement from "@shared/element";
+import { SettingsEvent, SettingsReadyEvent } from "@shared/events";
 
 @customElement("settings-modal")
 export class SettingsModal extends BaseElement {

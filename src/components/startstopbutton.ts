@@ -1,18 +1,19 @@
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
+
 import AppSettings, {
   Station,
   knownJjyKhz,
   knownStations,
-} from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
+} from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
 import {
   ReadyBusyEvent,
   ServerOffsetEvent,
   TimeSignalStateChangeEvent,
-} from "../shared/events";
-import RadioTimeSignal from "../shared/radiotimesignal";
+} from "@shared/events";
+import RadioTimeSignal from "@shared/radiotimesignal";
 
 const kStartStopButtonText = {
   stopped: "Start",

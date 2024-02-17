@@ -1,9 +1,10 @@
 import { SVGTemplateResult, TemplateResult, html, svg } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "../shared/events";
-import { TimeSignalState } from "../shared/radiotimesignal";
+
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "@shared/events";
+import { TimeSignalState } from "@shared/radiotimesignal";
 
 /* ionicons v5.0.0: https://ionic.io/ionicons */
 const kSvgFragments = {

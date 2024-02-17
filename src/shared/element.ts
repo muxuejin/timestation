@@ -1,7 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
 import { LitElement } from "lit";
-import EventBus, { EventCallback } from "./eventbus";
+
+import EventBus, { EventCallback } from "@shared/eventbus";
 
 type TLitElement = new (...args: any[]) => LitElement;
 

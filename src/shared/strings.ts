@@ -1,4 +1,4 @@
-import caseFoldingMap from "./casefoldingmap";
+import caseFoldingMap from "@shared/casefoldingmap";
 
 const kDiacritics = /[\u{0300}-\u{036f}]/gu;
 const kScriptRangeMap = {

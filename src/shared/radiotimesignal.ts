@@ -1,6 +1,10 @@
+import EventBus from "@shared/eventbus";
+import {
+  TimeSignalReadyEvent,
+  TimeSignalStateChangeEvent,
+} from "@shared/events";
+
 import createTimeSignalModule from "../../wasm/timesignal.js";
-import EventBus from "./eventbus";
-import { TimeSignalReadyEvent, TimeSignalStateChangeEvent } from "./events";
 
 interface TimeSignalModule extends EmscriptenModule {
   /* Emscripten library and WebAudio API functions. */

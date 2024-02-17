@@ -1,9 +1,10 @@
 import { html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { svgIcons } from "../shared/icons";
-import AppSettings from "../shared/appsettings";
-import { ReadyBusyEvent } from "../shared/events";
+
+import AppSettings from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent } from "@shared/events";
+import { svgIcons } from "@shared/icons";
 
 @customElement("dark-toggle")
 export class DarkToggle extends BaseElement {

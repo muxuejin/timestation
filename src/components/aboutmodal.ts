@@ -1,7 +1,8 @@
 import { html } from "lit";
 import { customElement, query, queryAll } from "lit/decorators.js";
-import BaseElement from "../shared/element";
-import { svgIcons } from "../shared/icons";
+
+import BaseElement from "@shared/element";
+import { svgIcons } from "@shared/icons";
 
 @customElement("about-modal")
 export class AboutModal extends BaseElement {

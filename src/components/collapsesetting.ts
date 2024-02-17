@@ -1,8 +1,9 @@
 import { html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ArrowDropdownEvent } from "../shared/events";
+
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ArrowDropdownEvent } from "@shared/events";
 
 @customElement("collapse-setting")
 export class CollapseSetting extends BaseElement {

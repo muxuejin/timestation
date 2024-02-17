@@ -1,14 +1,15 @@
 import { html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import AppSettings, { Station } from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, ServerOffsetEvent } from "../shared/events";
-import { knownLocales } from "../shared/locales";
+
+import AppSettings, { Station } from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent, ServerOffsetEvent } from "@shared/events";
+import { knownLocales } from "@shared/locales";
 import monotonicTime, {
   formatTimeZoneOffset,
   isEuropeanSummerTime,
-} from "../shared/time";
+} from "@shared/time";
 
 type TimeZone = [tzName: string, offset: number];
 

@@ -1,14 +1,16 @@
 import { html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent } from "../shared/events";
-import { svgIcons } from "../shared/icons";
-import "./aboutmodal";
-import { AboutModal } from "./aboutmodal";
-import "./darktoggle";
-import "./settingsmodal";
-import { SettingsModal } from "./settingsmodal";
+
+import "@components/aboutmodal";
+import { AboutModal } from "@components/aboutmodal";
+import "@components/darktoggle";
+import "@components/settingsmodal";
+import { SettingsModal } from "@components/settingsmodal";
+
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent } from "@shared/events";
+import { svgIcons } from "@shared/icons";
 
 @customElement("nav-bar")
 export class NavBar extends BaseElement {

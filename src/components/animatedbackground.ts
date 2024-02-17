@@ -1,8 +1,9 @@
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { ref } from "lit/directives/ref.js";
-import BaseElement from "../shared/element";
-import Rng from "../shared/rng";
+
+import BaseElement from "@shared/element";
+import Rng from "@shared/rng";
 
 const kShapeCount = 64 as const;
 const kRngs = {

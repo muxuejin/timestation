@@ -2,7 +2,7 @@ import {
   UnicodeScript,
   findScriptsInString,
   foldUnicodeString,
-} from "./strings";
+} from "@shared/strings";
 
 type LocaleData = [description: string, amMarker: string, pmMarker: string];
 

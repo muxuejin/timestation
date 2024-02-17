@@ -3,8 +3,9 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { Ref, createRef, ref } from "lit/directives/ref.js";
 import { ItemTemplate, repeat } from "lit/directives/repeat.js";
-import BaseElement, { stringArrayConverter } from "../shared/element";
-import { MenuListSelectEvent } from "../shared/events";
+
+import BaseElement, { stringArrayConverter } from "@shared/element";
+import { MenuListSelectEvent } from "@shared/events";
 
 export const MenuListPageStep = 6 as const;
 

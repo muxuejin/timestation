@@ -1,4 +1,4 @@
-import { defaultLocale, supportedLocales } from "./locales";
+import { defaultLocale, supportedLocales } from "@shared/locales";
 
 const kSupportedLocales = new Set(supportedLocales);
 

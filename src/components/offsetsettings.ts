@@ -1,17 +1,19 @@
 import { html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import AppSettings from "../shared/appsettings";
-import BaseElement, { registerEventHandler } from "../shared/element";
-import { ReadyBusyEvent, SettingsEvent } from "../shared/events";
-import { OffsetSettingsGroup } from "../shared/groups";
-import { decomposeOffset } from "../shared/time";
-import "./arrowdropdown";
-import { ArrowDropdown } from "./arrowdropdown";
-import "./collapsesetting";
-import "./numericinput";
-import { NumericInput } from "./numericinput";
-import "./signbutton";
-import { SignButton } from "./signbutton";
+
+import "@components/arrowdropdown";
+import { ArrowDropdown } from "@components/arrowdropdown";
+import "@components/collapsesetting";
+import "@components/numericinput";
+import { NumericInput } from "@components/numericinput";
+import "@components/signbutton";
+import { SignButton } from "@components/signbutton";
+
+import AppSettings from "@shared/appsettings";
+import BaseElement, { registerEventHandler } from "@shared/element";
+import { ReadyBusyEvent, SettingsEvent } from "@shared/events";
+import { OffsetSettingsGroup } from "@shared/groups";
+import { decomposeOffset } from "@shared/time";
 
 @customElement("offset-settings")
 export class OffsetSettings extends BaseElement {

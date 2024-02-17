@@ -3,8 +3,9 @@ import { customElement, property } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 import { createRef, ref } from "lit/directives/ref.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-import BaseElement, { stringArrayConverter } from "../shared/element";
-import { ArrowDropdownEvent } from "../shared/events";
+
+import BaseElement, { stringArrayConverter } from "@shared/element";
+import { ArrowDropdownEvent } from "@shared/events";
 
 @customElement("arrow-dropdown")
 export class ArrowDropdown extends BaseElement {

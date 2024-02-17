@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import babel from "vite-plugin-babel";
 import basicSsl from "@vitejs/plugin-basic-ssl";
+import path from "path";
 
 export default defineConfig({
   build: {
@@ -24,6 +25,13 @@ export default defineConfig({
     }),
     basicSsl(),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@shared": path.resolve(__dirname, "./src/shared"),
+    },
+  },
   server: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",

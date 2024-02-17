@@ -1,5 +1,6 @@
 import { defineConfig } from "vitest/config";
 import babel from "vite-plugin-babel";
+import path from "path";
 
 export default defineConfig({
   test: {
@@ -23,6 +24,13 @@ export default defineConfig({
       filter: /\.[jt]sx?$/,
     }),
   ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@shared": path.resolve(__dirname, "./src/shared"),
+    },
+  },
   server: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
