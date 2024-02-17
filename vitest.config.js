@@ -8,6 +8,7 @@ export default defineConfig({
       enabled: true,
       name: "chrome",
       headless: true,
+      fileParallelism: false,
     },
   },
   plugins: [
@@ -29,6 +30,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
       "@components": path.resolve(__dirname, "./src/components"),
       "@shared": path.resolve(__dirname, "./src/shared"),
+      "@test": path.resolve(__dirname, "./test"),
     },
   },
   server: {
