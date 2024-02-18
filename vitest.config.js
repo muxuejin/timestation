@@ -10,6 +10,12 @@ export default defineConfig({
       headless: true,
       fileParallelism: false,
     },
+    coverage: {
+      enabled: true,
+      exclude: ["public/*", "wasm/*"],
+      provider: "istanbul",
+      reporter: ["text", "json"],
+    },
   },
   plugins: [
     babel({
