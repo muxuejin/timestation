@@ -8,6 +8,7 @@ EMCC_PARAMS=(
   '-sSTACK_SIZE=40960'
   '-sMALLOC=none'
   '-sEXPORT_ES6'
+  '-O3'
 )
 
 # Append any user parameters.
