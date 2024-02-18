@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
+    "prebuild": "cd ./src/wasm && ./build_editdistance.sh && ./build_timesignal.sh",
     "build": "vite build",
     "postbuild": "mkdir -p ./dist/wasm && cp ./wasm/*.js ./wasm/*.wasm ./dist/wasm",
     "preview": "vite preview",
