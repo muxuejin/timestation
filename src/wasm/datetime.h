@@ -25,7 +25,7 @@ typedef struct tsig_datetime_t {
   uint16_t msec;    /** Millisecond (0-999). */
 } tsig_datetime_t;
 
-/* TODO: Remove. */
+#ifdef TSIG_DEBUG
 static void datetime_print(tsig_datetime_t datetime) {
   printf("datetime = {\n");
   printf("  .year = %u\n", datetime.year);
@@ -39,6 +39,7 @@ static void datetime_print(tsig_datetime_t datetime) {
   printf("  .msec = %u\n", datetime.msec);
   printf("};\n");
 }
+#endif /* TSIG_DEBUG */
 
 /**
  * Determine whether a year is a leap year.

@@ -19,10 +19,11 @@
  * created. Only the first 3 are necessary; the .ww.js file can be deleted.
  * However, timesignal.js needs to be modified before it can be used.
  *
- * As of emsdk 3.1.51 (year end 2023), Emscripten generates broken JS glue code
- * for a module using the Wasm Audio Worklets API if compiled with -sEXPORT_ES6.
- * The Wasm* binary is fetched in AudioWorkletGlobalScope instead of the main
- * thread, so URL() is undefined. A fix is to turn this:
+ * Prior to v3.1.54 (cf. https://github.com/emscripten-core/emscripten/pull/21192),
+ * emscripten generates broken JS glue code for a module using the Wasm Audio
+ * Worklets API if compiled with -sEXPORT_ES6. The Wasm binary is fetched in
+ * AudioWorkletGlobalScope instead of the main thread, so URL() is undefined.
+ * A fix is to turn this:
  *
  *  var wasmBinaryFile;
  *  if (Module['locateFile']) {
@@ -194,9 +195,11 @@ EM_BOOL tsig_awp_process_cb(int n_inputs, const AudioSampleFrame *inputs,
 
       tsig_waveform_init(&tsig_ctx.waveform_ctx, &tsig_ctx.params);
 
+#ifdef TSIG_DEBUG
       printf("Wasm loaded params at %f, phase delta is %u / %u\n",
              tsig_ctx.waveform_ctx.timestamp, tsig_ctx.waveform_ctx.phase_delta,
              tsig_ctx.waveform_ctx.phase_base);
+#endif /* TSIG_DEBUG */
 
       next_state = TSIG_STATE_FADE_IN;
       break;
@@ -248,6 +251,11 @@ EM_BOOL tsig_awp_process_cb(int n_inputs, const AudioSampleFrame *inputs,
  */
 void tsig_awp_create_cb(EMSCRIPTEN_WEBAUDIO_T audio_ctx, EM_BOOL success,
                         void *init_js_cb) {
+#ifdef TSIG_DEBUG
+  printf("tsig_awp_create_cb(audio_ctx=%d, success=%d, init_js_cb=%p)\n",
+         audio_ctx, success, init_js_cb);
+#endif /* TSIG_DEBUG */
+
   if (!success)
     return;
 
@@ -278,6 +286,11 @@ void tsig_awp_create_cb(EMSCRIPTEN_WEBAUDIO_T audio_ctx, EM_BOOL success,
  */
 void tsig_aw_thread_init_cb(EMSCRIPTEN_WEBAUDIO_T audio_ctx, EM_BOOL success,
                             void *init_js_cb) {
+#ifdef TSIG_DEBUG
+  printf("tsig_aw_thread_init_cb(audio_ctx=%d, success=%d, init_js_cb=%p)\n",
+         audio_ctx, success, init_js_cb);
+#endif /* TSIG_DEBUG */
+
   if (!success)
     return;
 
@@ -299,6 +312,11 @@ EMSCRIPTEN_KEEPALIVE void tsig_init(EMSCRIPTEN_WEBAUDIO_T audio_ctx,
                                     uint32_t sample_rate,
                                     tsig_js_cb_func init_js_cb,
                                     tsig_js_cb_func js_cb) {
+#ifdef TSIG_DEBUG
+  printf("tsig_init(audio_ctx=%d, sample_rate=%u, init_js_cb=%p, js_cb=%p)\n",
+         audio_ctx, sample_rate, init_js_cb, js_cb);
+#endif /* TSIG_DEBUG */
+
   atomic_store(&tsig_ctx.state, TSIG_STATE_IDLE);
   tsig_ctx.waveform_ctx.sample_rate = sample_rate;
   rearm_state_transition_delay();
@@ -327,10 +345,12 @@ EMSCRIPTEN_KEEPALIVE void tsig_start() {
 EMSCRIPTEN_KEEPALIVE void tsig_load_params(double offset, uint8_t station,
                                            uint8_t jjy_khz, int16_t dut1,
                                            uint8_t noclip) {
+#ifdef TSIG_DEBUG
   printf(
       "tsig_load_params(offset=%f, station=%u, jjy_khz=%u, dut1=%d, "
       "noclip=%d);\n",
       offset, station, jjy_khz, dut1, noclip);
+#endif /* TSIG_DEBUG */
 
   tsig_params.offset = offset;
   tsig_params.station = station;
@@ -347,7 +367,7 @@ EMSCRIPTEN_KEEPALIVE void tsig_stop() {
   int state = atomic_load(&tsig_ctx.state);
   int next_state = TSIG_STATE_FADE_OUT;
 
-  /* No need to fade out if Audio Worklet thread never started. */
+  /* No need to fade out if playback never started. */
   if (state < TSIG_STATE_FADE_IN) {
     rearm_state_transition_delay();
     next_state = TSIG_STATE_IDLE;
@@ -357,7 +377,7 @@ EMSCRIPTEN_KEEPALIVE void tsig_stop() {
   tsig_js_cb(next_state);
 }
 
-/* TODO: Remove. */
+#ifdef TSIG_DEBUG
 EMSCRIPTEN_KEEPALIVE uint32_t tsig_print_timestamp(double timestamp, int n) {
   uint32_t ret = 0;
 
@@ -378,3 +398,4 @@ EMSCRIPTEN_KEEPALIVE uint32_t tsig_print_timestamp(double timestamp, int n) {
 
   return ret;
 }
+#endif /* TSIG_DEBUG */

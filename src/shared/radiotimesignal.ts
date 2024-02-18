@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import EventBus from "@shared/eventbus";
 import {
   TimeSignalReadyEvent,
@@ -116,12 +118,14 @@ class RadioTimeSignal {
   };
 
   #communicate = (state: number) => {
-    console.log(`RadioTimeSignal.#communicate(${state});`);
+    if (import.meta.env.DEV)
+      console.log(`RadioTimeSignal.#communicate(${state});`);
     this.state = state;
 
     if (this.state === "idle") {
       this.audioContext.suspend().then(() => {
-        console.log(`Suspended playback at ${Date.now()}`);
+        if (import.meta.env.DEV)
+          console.log(`Suspended playback at ${Date.now()}`);
       });
     } else if (this.state === "reqparams") {
       this.#sendParams();
@@ -142,9 +146,10 @@ class RadioTimeSignal {
       noclip,
     );
 
-    console.log(
-      `Sent params at ${Date.now()}, output latency ${outputLatencyMs}`,
-    );
+    if (import.meta.env.DEV)
+      console.log(
+        `Sent params at ${Date.now()}, output latency ${outputLatencyMs}`,
+      );
   };
 
   start(params: TimeSignalModuleParams) {
@@ -155,7 +160,8 @@ class RadioTimeSignal {
      * silence for some time and signals an appropriate state change to
      * request params.
      */
-    console.log(`RadioTimeSignal.start() at ${Date.now()}`);
+    if (import.meta.env.DEV)
+      console.log(`RadioTimeSignal.start() at ${Date.now()}`);
     this.#params = params;
     if (this.audioContext.state === "suspended")
       this.audioContext.resume().then(this.#module._tsig_start);
