@@ -3,35 +3,77 @@ import { customElement, query, queryAll } from "lit/decorators.js";
 
 import BaseElement from "@shared/element";
 import { svgIcons } from "@shared/icons";
+import { classMap } from "lit/directives/class-map.js";
+
+const kTransitionMs = 500 as const;
 
 @customElement("about-modal")
 export class AboutModal extends BaseElement {
   @query("about-modal dialog", true)
   private accessor dialog!: HTMLDialogElement;
 
-  @query("about-modal input", true)
-  private accessor firstInput!: HTMLInputElement;
+  @queryAll("about-modal input")
+  private accessor inputs!: NodeListOf<HTMLInputElement>;
 
   @queryAll("about-modal .collapse-content")
   private accessor contents!: NodeListOf<HTMLDivElement>;
 
-  showModal() {
-    this.firstInput.checked = true;
-    this.dialog.showModal();
+  private set overflowIndex(value: number) {
+    clearTimeout(this.#timeoutId);
+    this.#timeoutId = setTimeout(() => {
+      this.#overflowIndex = value;
+      this.requestUpdate();
+    }, kTransitionMs);
   }
 
-  #closeModal() {
-    this.firstInput.scrollIntoView({ behavior: "instant" });
+  private get overflowIndex() {
+    return this.#overflowIndex;
+  }
+
+  #timeoutId?: ReturnType<typeof setTimeout>;
+
+  #overflowIndex = -1;
+
+  showModal() {
+    this.dialog.showModal();
+    this.inputs[0].scrollIntoView({ behavior: "instant" });
+    this.inputs[0].checked = true;
+    this.#scrollSectionsToFront();
+    this.overflowIndex = 0;
+  }
+
+  #changeSection(event: Event) {
+    const input = event.target as HTMLInputElement;
+    this.#scrollSectionsToFront();
+    this.overflowIndex = [...this.inputs].indexOf(input);
+  }
+
+  #scrollSectionsToFront() {
     this.contents.forEach((content) =>
       content.scroll({ top: 0, left: 0, behavior: "instant" }),
     );
   }
 
   protected render() {
+    const overflowY = [
+      classMap({
+        "[@media(min-height:600px)]:overflow-y-auto": this.overflowIndex === 0,
+      }),
+      classMap({
+        "[@media(min-height:600px)]:overflow-y-auto": this.overflowIndex === 1,
+      }),
+      classMap({
+        "[@media(min-height:600px)]:overflow-y-auto": this.overflowIndex === 2,
+      }),
+      classMap({
+        "[@media(min-height:600px)]:overflow-y-auto": this.overflowIndex === 3,
+      }),
+    ];
+
     return html`
-      <dialog class="modal" @close=${this.#closeModal}>
+      <dialog class="modal">
         <div
-          class="modal-box flex flex-col gap-4 w-[90%] [@media(min-height:600px)]:max-h-[calc(100dvh-2rem)] max-w-[calc(100dvw-2rem)]"
+          class="modal-box flex flex-col gap-4 w-[90%] max-w-[calc(100dvw-2rem)] max-h-[calc(100dvh-2rem)]"
         >
           <form class="flex items-center" method="dialog">
             <h3 class="grow font-bold text-xl sm:text-2xl">About</h3>
@@ -46,15 +88,17 @@ export class AboutModal extends BaseElement {
 
           <div class="overflow-y-auto">
             <div class="join join-vertical max-w-full">
-              <div
-                class="collapse collapse-arrow collapse-arrow-right join-item"
-              >
-                <input name="about-accordion" type="radio" />
+              <div class="collapse collapse-arrow join-item">
+                <input
+                  name="about-accordion"
+                  type="radio"
+                  @change=${this.#changeSection}
+                />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Overview
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[0]}"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
@@ -68,10 +112,10 @@ export class AboutModal extends BaseElement {
                     </p>
                     <p>
                       The vast majority of all radio-controlled clocks and
-                      watches ever sold (often marketed as &ldquo;atomic
-                      clocks&rdquo;) rely on one of these five stations.
-                      However, their broadcasts are limited in geographic range
-                      and notoriously prone to interference in urban areas.
+                      watches (often marketed as &ldquo;atomic clocks&rdquo;)
+                      rely on one of these five stations. However, their
+                      broadcasts are limited in geographic range and notoriously
+                      prone to interference in urban areas.
                     </p>
                     <p>
                       <span class="font-semibold">Time Station Emulator</span>
@@ -82,121 +126,61 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div
-                class="collapse collapse-arrow collapse-arrow-right join-item"
-              >
-                <input name="about-accordion" type="radio" />
-                <div class="collapse-title pl-0 font-bold text-lg">
-                  Technical Details
-                </div>
-                <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
-                >
-                  <span class="flex flex-col gap-2 min-w-0">
-                    <p>
-                      <span class="font-semibold">Time Station Emulator</span>
-                      generates an audio waveform intentionally crafted to
-                      create, when played back through consumer-grade audio
-                      hardware, the right kind of RF noise to be mistaken for a
-                      time station broadcast.
-                    </p>
-                    <p>
-                      Specifically, given a fundamental carrier frequency used
-                      by a real time station, it generates and modulates the
-                      highest odd-numbered subharmonic that also falls below the
-                      Nyquist frequencies of common playback sample rates. One
-                      of the higher-frequency harmonics inevitably created by
-                      any real-world DAC during playback will then be the
-                      original fundamental, which should leak to the environment
-                      as a short-range radio transmission via the ad-hoc antenna
-                      formed by the physical wires and circuit traces in the
-                      audio output path.
-                    </p>
-                    <div
-                      class="alert grid-flow-col items-start text-start"
-                      role="alert"
-                    >
-                      <span class="w-6 h-6 sm:w-8 sm:h-8">
-                        ${svgIcons.info}
-                      </span>
-                      <span class="flex flex-col gap-2 min-w-0">
-                        <p>
-                          Higher-frequency harmonics are considered artifacts
-                          beyond the range of human hearing, so they are
-                          routinely suppressed by audio compression algorithms
-                          and better equipment.
-                        </p>
-                        <p>
-                          For best results, use this emulator with the
-                          <span class="font-semibold">built-in speakers</span>
-                          of a <span class="font-semibold">phone/tablet</span>.
-                          In some cases,
-                          <span class="font-semibold">
-                            wired headphones/earbuds
-                          </span>
-                          may also be suitable.
-                        </p>
-                        <p>
-                          Bluetooth devices and audiophile-grade equipment are
-                          less likely to work.
-                        </p>
-                      </span>
-                    </div>
-                  </span>
-                </div>
-              </div>
-
-              <div
-                class="collapse collapse-arrow collapse-arrow-right join-item"
-              >
-                <input name="about-accordion" type="radio" />
+              <div class="collapse collapse-arrow join-item">
+                <input
+                  name="about-accordion"
+                  type="radio"
+                  @change=${this.#changeSection}
+                />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Quick Start
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[1]}"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
-                      The following assumes you are using
                       <span class="font-semibold">Time Station Emulator</span>
-                      with the
-                      <span class="font-semibold">built-in speakers</span> of a
-                      <span class="font-semibold">phone/tablet</span>.
-                      &ldquo;Receiver&rdquo; refers to the clock/watch being
-                      set.
+                      works best with a
+                      <span class="font-semibold">built-in speaker</span> of a
+                      <span class="font-semibold">phone or tablet</span>.
                     </p>
                     <ul class="list-decimal pl-6">
                       <li>
                         <span class="flex flex-col gap-2">
                           <p>
                             <span class="font-semibold">
-                              Choose suitable settings on both the emulator and
-                              the receiver.
+                              Choose emulator settings.
                             </span>
                           </p>
                           <p>
-                            The most important emulator setting is the station
-                            to emulate. Receivers that support more than one
-                            station may (or may not) prefer one of them over the
-                            others.
+                            The most important setting is which time station to
+                            emulate. Certain settings are only available for
+                            certain stations.
                           </p>
                           <p>
-                            For receivers that have a time zone setting, choose
-                            the correct one for your location.
+                            Clocks (or watches) that support more than one
+                            station may prefer one of them over the others.
                           </p>
                         </span>
                       </li>
                       <li class="pt-2">
                         <span class="flex flex-col gap-2">
                           <p>
-                            <span class="font-semibold"
-                              >Place the receiver into sync mode.
+                            <span class="font-semibold">
+                              Choose any clock settings and place the clock into
+                              sync mode.
                             </span>
                           </p>
                           <p>
-                            You may have to navigate menus or press a physical
-                            switch.
+                            You will probably have to navigate menus and/or
+                            press physical buttons, but most clocks provide a
+                            way to force a synchronization attempt.
+                          </p>
+                          <p>
+                            If your clock has them, try to choose station and/or
+                            time zone settings that make sense for your
+                            location.
                           </p>
                         </span>
                       </li>
@@ -205,7 +189,7 @@ export class AboutModal extends BaseElement {
                           <p>
                             <span class="font-semibold">
                               Position the speaker as close as possible to the
-                              receiver&rsquo;s antenna.
+                              clock&rsquo;s antenna.
                             </span>
                           </p>
                           <p>
@@ -215,9 +199,9 @@ export class AboutModal extends BaseElement {
                             unsure where the antenna is.
                           </p>
                           <p>
-                            The volume should be set so that the receiver picks
-                            up the cleanest signal. Usually, this occurs at or
-                            near the maximum possible volume.
+                            The volume should be set so that the clock picks up
+                            the cleanest signal. Usually, this occurs at or near
+                            the maximum possible volume.
                           </p>
                           <div
                             class="alert alert-warning grid-flow-col items-start text-start"
@@ -228,23 +212,25 @@ export class AboutModal extends BaseElement {
                             </span>
                             <span class="flex flex-col gap-2 min-w-0">
                               <p>
-                                <strong>
-                                  Do not place your ears near the speaker
-                                </strong>
-                                to determine volume. Use a visual volume
-                                indicator instead.
+                                <span class="font-bold">
+                                  DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO
+                                  DETERMINE VOLUME.
+                                </span>
+                                Use a visual volume indicator instead.
                               </p>
                               <p>
-                                The pitch of the generated waveform is high
-                                enough to be difficult to perceive, even if your
-                                equipment is playing it back dangerously loud.
+                                The generated waveform has full dynamic range,
+                                but is pitched high enough to be difficult to
+                                perceive.
                               </p>
                               <p>
-                                <strong>
-                                  Any loud noise can cause permanent hearing
-                                  damage
-                                </strong>
-                                in the wrong circumstances!
+                                Many common devices are capable of playing it
+                                back loud enough to potentially cause
+                                <span class="font-bold">
+                                  permanent hearing damage,
+                                </span>
+                                even if you &ldquo;can&rsquo;t hear
+                                anything&rdquo;!
                               </p>
                             </span>
                           </div>
@@ -259,8 +245,8 @@ export class AboutModal extends BaseElement {
                             </span>
                           </p>
                           <p>
-                            If all goes well, the receiver will set itself
-                            within three minutes.
+                            If all goes well, the clock will set itself within
+                            three minutes.
                           </p>
                         </span>
                       </li>
@@ -269,15 +255,17 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div
-                class="collapse collapse-arrow collapse-arrow-right join-item"
-              >
-                <input name="about-accordion" type="radio" />
+              <div class="collapse collapse-arrow join-item">
+                <input
+                  name="about-accordion"
+                  type="radio"
+                  @change=${this.#changeSection}
+                />
                 <div class="collapse-title pl-0 font-bold text-lg">
                   Calculating Offsets
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] [@media(min-height:600px)]:overflow-y-auto"
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[2]}"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
@@ -316,8 +304,7 @@ export class AboutModal extends BaseElement {
                       </li>
                     </ul>
                     <p>
-                      As a cautionary example, suppose you wish to set a watch
-                      from the UK that syncs to
+                      Suppose you wish to set a watch from the UK that syncs to
                       <span class="font-semibold">MSF</span> during a visit to
                       <span class="font-semibold">Sydney, NSW, Australia</span>
                       in the month of <span class="font-semibold">July</span>:
@@ -337,7 +324,7 @@ export class AboutModal extends BaseElement {
                       </li>
                     </ul>
                     <p>
-                      However, if this visit were to occur in
+                      However, if your visit were to occur in
                       <span class="font-semibold">January</span>:
                     </p>
                     <ul class="list-disc pl-6">
@@ -354,6 +341,79 @@ export class AboutModal extends BaseElement {
                         <span class="font-semibold">+11:00</span>!
                       </li>
                     </ul>
+                  </span>
+                </div>
+              </div>
+
+              <div class="collapse collapse-arrow join-item">
+                <input
+                  name="about-accordion"
+                  type="radio"
+                  @change=${this.#changeSection}
+                />
+                <div class="collapse-title pl-0 font-bold text-lg">
+                  Technical Details
+                </div>
+                <div
+                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[3]}"
+                >
+                  <span class="flex flex-col gap-2 min-w-0">
+                    <p>
+                      <span class="font-semibold">Time Station Emulator</span>
+                      generates an audio waveform intentionally crafted to
+                      create, when played back through consumer-grade audio
+                      hardware, the right kind of RF noise to be mistaken for a
+                      time station broadcast.
+                    </p>
+                    <p>
+                      Specifically, given a fundamental carrier frequency used
+                      by a real time station, it generates and modulates the
+                      highest odd-numbered subharmonic that also falls below the
+                      Nyquist frequencies of common playback sample rates.
+                    </p>
+                    <p>
+                      One of the higher-frequency harmonics inevitably created
+                      by any real-world DAC during playback will then be the
+                      original fundamental, which should leak to the environment
+                      as a short-range radio transmission via the ad-hoc antenna
+                      formed by the physical wires and circuit traces in the
+                      audio output path.
+                    </p>
+                    <div
+                      class="alert grid-flow-col items-start text-start"
+                      role="alert"
+                    >
+                      <span class="w-6 h-6 sm:w-8 sm:h-8">
+                        ${svgIcons.info}
+                      </span>
+                      <span class="flex flex-col gap-2 min-w-0">
+                        <p>
+                          <span class="font-semibold">
+                            Time Station Emulator
+                          </span>
+                          works best with a
+                          <span class="font-semibold">built-in speaker</span> of
+                          a <span class="font-semibold">phone or tablet</span>.
+                        </p>
+                        <p>
+                          In some cases,
+                          <span class="font-semibold">
+                            wired headphones or earbuds
+                          </span>
+                          may also be suitable.
+                        </p>
+                        <p>
+                          Higher-frequency harmonics are considered artifacts
+                          beyond the range of human hearing, so they are
+                          routinely suppressed by audio compression algorithms
+                          and better equipment.
+                        </p>
+                        <p>
+                          Bluetooth devices and audiophile-grade equipment are
+                          therefore less likely to work.
+                        </p>
+                      </span>
+                    </div>
                   </span>
                 </div>
               </div>

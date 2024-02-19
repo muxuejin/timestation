@@ -14,6 +14,21 @@ import { svgIcons } from "@shared/icons";
 
 @customElement("nav-bar")
 export class NavBar extends BaseElement {
+  @query("nav-bar .dropdown", true)
+  private accessor dropdown!: HTMLDivElement;
+
+  @query("nav-bar .dropdown [role=button].btn", true)
+  private accessor menuButton!: HTMLDivElement;
+
+  @query("nav-bar .dropdown [role=button].btn input", true)
+  private accessor checkbox!: HTMLInputElement;
+
+  @query("nav-bar about-modal", true)
+  private accessor aboutModal!: AboutModal;
+
+  @query("nav-bar settings-modal", true)
+  private accessor settingsModal!: SettingsModal;
+
   @state()
   private accessor ready = false;
 
@@ -22,28 +37,41 @@ export class NavBar extends BaseElement {
     this.ready = ready;
   }
 
-  @query("nav-bar details.dropdown", true)
-  private accessor dropdown!: HTMLDetailsElement;
+  @state()
+  private set open(value: boolean) {
+    if (value) {
+      this.dropdown.setAttribute("open", "");
+      this.checkbox.checked = true;
+    } else {
+      this.dropdown.removeAttribute("open");
+      this.checkbox.checked = false;
+      this.menuButton.blur();
+    }
+    this.#open = value;
+  }
 
-  @query("nav-bar about-modal", true)
-  private accessor aboutModal!: AboutModal;
+  private get open() {
+    return this.#open;
+  }
 
-  @query("nav-bar settings-modal", true)
-  private accessor settingsModal!: SettingsModal;
+  #open = false;
 
-  #closeDropdown() {
-    /* Call removeAttribute() async as a workaround for a visual bug. */
-    setTimeout(() => this.dropdown.removeAttribute("open"));
+  #clickMenu() {
+    this.open = !this.open;
   }
 
   #clickAbout() {
-    this.#closeDropdown();
     this.aboutModal.showModal();
+    this.open = false;
   }
 
   #clickSettings() {
-    this.#closeDropdown();
     this.settingsModal.showModal();
+    this.open = false;
+  }
+
+  #clickGitHub() {
+    this.open = false;
   }
 
   protected render() {
@@ -55,28 +83,38 @@ export class NavBar extends BaseElement {
     return html`
       <div class="navbar sm:min-h-20">
         <div class="navbar-start">
-          <details class="dropdown">
-            <summary class="btn btn-ghost p-0 w-12 h-12 sm:w-16 sm:h-16">
-              <span class="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
+          <div class="dropdown">
+            <div
+              class="btn btn-ghost p-0 w-12 h-12 sm:w-16 sm:h-16 swap"
+              role="button"
+              tabindex="0"
+              @click=${this.#clickMenu}
+            >
+              <input type="checkbox" />
+
+              <span class="swap-off w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
                 ${svgIcons.menu}
               </span>
-            </summary>
+
+              <span class="swap-on w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
+                ${svgIcons.close}
+              </span>
+            </div>
+
             <ul
               class="p-2 drop-shadow menu dropdown-content z-[1] bg-base-100 rounded-box font-medium sm:text-lg"
             >
               <li>
-                <a class="px-1 sm:px-2" @click=${this.#clickAbout}>
+                <a class="px-2" @click=${this.#clickAbout}>
                   <span class="flex sm:py-1 items-center">
                     <span class="w-6 h-6 sm:w-8 sm:h-8">${svgIcons.help}</span>
                     <span class="mx-2">About</span>
                   </span>
                 </a>
               </li>
+
               <li>
-                <a
-                  class="px-1 sm:px-2 ${disabled}"
-                  @click=${this.#clickSettings}
-                >
+                <a class="px-2 ${disabled}" @click=${this.#clickSettings}>
                   <span class="flex sm:py-1 items-center">
                     <span class="w-6 h-6 sm:w-8 sm:h-8">
                       ${svgIcons.settings}
@@ -85,8 +123,27 @@ export class NavBar extends BaseElement {
                   </span>
                 </a>
               </li>
+
+              <li>
+                <a
+                  class="px-2"
+                  href="https://www.github.com/"
+                  target="_blank"
+                  @click=${this.#clickGitHub}
+                >
+                  <span class="flex sm:py-1 items-center">
+                    <span class="w-6 h-6 sm:w-8 sm:h-8">
+                      ${svgIcons.github}
+                    </span>
+                    <span class="mx-2">GitHub</span>
+                    <span class="w-4 h-4 sm:w-6 sm:h-6">
+                      ${svgIcons.open}
+                    </span>
+                  </span>
+                </a>
+              </li>
             </ul>
-          </details>
+          </div>
         </div>
 
         <div class="navbar-center">

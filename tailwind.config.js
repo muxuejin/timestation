@@ -9,16 +9,20 @@ export default {
   },
   theme: {
     extend: {
+      animation: {
+        boingo: "boingo 0.3s 1",
+        shapes: "shapes linear infinite",
+      },
+      dropShadow: {
+        aura: "0 0 0.125rem hsl(var(--color-drop-shadow) / 0.6)",
+      },
       fontFamily: {
         sans: ["Inter", ...tailwindTheme.fontFamily.sans],
         serif: ["Time Station Emulator", ...tailwindTheme.fontFamily.serif],
         mono: ["Victor Mono", ...tailwindTheme.fontFamily.mono],
       },
-      dropShadow: {
-        aura: "0 0 0.125rem hsl(var(--color-drop-shadow) / 0.6)",
-      },
-      width: {
-        18: "4.5rem",
+      gridTemplateColumns: {
+        fit: "minmax(min-content, max-content) minmax(min-content, max-content)",
       },
       keyframes: {
         boingo: {
@@ -54,9 +58,8 @@ export default {
           },
         },
       },
-      animation: {
-        boingo: "boingo 0.3s 1",
-        shapes: "shapes linear infinite",
+      width: {
+        18: "4.5rem",
       },
     },
   },
@@ -68,7 +71,7 @@ export default {
           "color-scheme": "light",
           "primary": "#5E81AC",
           "secondary": "#81A1C1",
-          "accent": "#88C0D0",
+          "accent": "#4D7399",
           "neutral": "#4C566A",
           "neutral-content": "#D8DEE9",
           "base-100": "#ECEFF4",
@@ -83,6 +86,8 @@ export default {
           "--rounded-btn": "0.2rem",
           "--rounded-badge": "0.4rem",
           "--tab-radius": "0.2rem",
+          "--animation-btn": "0.5s",
+          "--animation-input": "0.5s",
         },
       },
       {
@@ -90,7 +95,7 @@ export default {
           "color-scheme": "dark",
           "primary": "#1C4E80",
           "secondary": "#7C909A",
-          "accent": "#EA6947",
+          "accent": "#061d45",
           "neutral": "#23282E",
           "base-100": "#1d232a",
           "base-200": "#191e24",
@@ -104,6 +109,8 @@ export default {
           "--rounded-btn": "0.2rem",
           "--rounded-badge": "0.4rem",
           "--tab-radius": "0.2rem",
+          "--animation-btn": "0.5s",
+          "--animation-input": "0.5s",
         },
       },
     ],

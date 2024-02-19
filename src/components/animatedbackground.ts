@@ -43,7 +43,7 @@ export class AnimatedBackground extends BaseElement {
   protected render() {
     return html`
       <span
-        class="bg-gradient-to-b from-base-100 to-primary from-[4rem] sm:from-[5rem] fixed w-full h-full overflow-hidden"
+        class="bg-gradient-170 from-base-100 to-accent from-[4rem] sm:from-[5rem] fixed w-full h-full overflow-hidden"
       >
         ${this.#shapeTemplates}
       </span>

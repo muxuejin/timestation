@@ -189,16 +189,20 @@ export class TransmitClock extends BaseElement {
                 <h4 class="font-bold sm:text-lg">Transmitted Time</h4>
                 <span class="text-sm sm:text-base text-wrap">
                   The date, time, and time zone
-                  <strong>that will be transmitted</strong>.
+                  <span class="font-bold">that will be transmitted</span>.
                 </span>
                 <span class="text-sm sm:text-base text-wrap">
-                  Usually, this is <strong>not</strong> a &ldquo;preview&rdquo;
-                  of how a device will display the time it receives, but it may
-                  be a useful point of reference if you need to enter an offset.
+                  This is <span class="font-bold">sometimes</span> a
+                  &ldquo;preview&rdquo; of how a clock (or watch) will display
+                  the time it receives, and may be a useful point of reference
+                  if you need to enter an offset.
                 </span>
                 <span class="text-sm sm:text-base text-wrap">
-                  See <strong>About &gt; Calculating Offsets</strong> in the
-                  menu for more details.
+                  See
+                  <span class="font-bold">
+                    About &rsaquo; Calculating Offsets
+                  </span>
+                  for more details.
                 </span>
               </span>
             `}

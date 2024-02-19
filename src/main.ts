@@ -72,11 +72,19 @@ export class TimeSignal extends BaseElement {
 
       <nav-bar></nav-bar>
 
-      <div class="flex justify-center items-center w-screen py-8 sm:py-16">
-        <div class="flex flex-col items-center gap-4">
+      <div
+        class="flex justify-center my-8 [@media(((max-width:639px)_and_(min_height:600px)_or_(min-height:640px))]:my-12 [@media(((min-width:800px)_and_(max-height:600px))_or_(min-height:720px))]:my-16"
+      >
+        <div
+          class="grid grid-cols-1 [@media((min-width:800px)_and_(max-height:600px))]:grid-cols-fit place-items-center gap-4 [@media((max-width:639px)_and_(min-height:512px))]:gap-8 [@media((max-width:639px)_and_(min-height:640px))]:gap-12 [@media(((min-width:800px)_and_(max-height:600px))_or_(min-height:800px))]:gap-16"
+        >
           <transmit-clock></transmit-clock>
-          <indicator-icon></indicator-icon>
-          <start-stop-button></start-stop-button>
+          <indicator-icon
+            class="[@media((min-width:800px)_and_(max-height:600px))]:col-start-2"
+          ></indicator-icon>
+          <start-stop-button
+            class="[@media((min-width:800px)_and_(max-height:600px))]:col-span-2"
+          ></start-stop-button>
         </div>
       </div>
     `;

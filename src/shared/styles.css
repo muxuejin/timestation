@@ -110,15 +110,54 @@
 }
 
 @layer utilities {
+  /* Slow some transition durations. */
+  .btn,
+  .dropdown .dropdown-content,
+  .modal,
+  .modal-box,
+  .collapse,
+  .collapse-arrow > .collapse-title:after {
+    transition-duration: 0.5s;
+  }
+
+  /* Create an angled gradient background. */
+  .bg-gradient-170 {
+    background: linear-gradient(170deg, var(--tw-gradient-stops));
+  }
+
+  /* Shift a collapse arrow to the right. */
+  .collapse-arrow > .collapse-title:after {
+    --tw-translate-x: 100%;
+  }
+
   /* Increase speed of clock digit turnover. */
   .countdown > *:before {
     transition: top 0.25s cubic-bezier(1, 0, 0, 1);
     will-change: top;
   }
 
-  /* Try to fix gap between tooltip and tail when at >100% zoom. */
-  .tooltip {
-    --tooltip-offset: calc(100% + var(--tooltip-tail, 0px));
+  /* Make animatable daisyUI dropdowns also work with open attribute. */
+  /* prettier-ignore */
+  .dropdown .dropdown-content {
+    visibility: hidden;
+    opacity: 0;
+    transform-origin: top;
+    --tw-scale-x: .95;
+    --tw-scale-y: .95;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+  /* prettier-ignore */
+  .dropdown[open] .dropdown-content {
+    --tw-scale-x: 1;
+    --tw-scale-y: 1;
+    transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    visibility: visible;
+    opacity: 1;
   }
 
   /* Steal the rotating dropdown caret from daisyUI's menu. */
@@ -130,7 +169,7 @@
     width: 0.5rem;
     transform: rotate(45deg);
     transition-property: transform, margin-top;
-    transition-duration: 0.3s;
+    transition-duration: 0.5s;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     content: "";
     transform-origin: 75% 75%;
@@ -142,11 +181,6 @@
     margin-top: 0;
   }
 
-  /* Shift a collapse arrow to the right. */
-  .collapse-arrow-right :where(.collapse > .collapse-title):after {
-    --tw-translate-x: 100%;
-  }
-
   /* Outline a daisyUI Join containing input elements with :focus-within. */
   .join-focus-within:focus-within {
     box-shadow: none;
@@ -156,8 +190,8 @@
     border-radius: var(--rounded-btn, 0.5rem);
   }
 
-  /* Create a gradient background between daisyUI colors. */
-  .bg-gradient-b1-p {
-    background: linear-gradient(170deg, oklch(var(--b1)), oklch(var(--p)));
+  /* Try to fix gap between tooltip and tail when at >100% zoom. */
+  .tooltip {
+    --tooltip-offset: calc(100% + var(--tooltip-tail, 0px));
   }
 }
