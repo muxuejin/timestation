@@ -115,7 +115,9 @@ export class AboutModal extends BaseElement {
                       watches (often marketed as &ldquo;atomic clocks&rdquo;)
                       rely on one of these five stations. However, their
                       broadcasts are limited in geographic range and notoriously
-                      prone to interference in urban areas.
+                      prone to interference in urban areas, so many such clocks
+                      end up never actually using their self-setting
+                      functionality.
                     </p>
                     <p>
                       <span class="font-semibold">Time Station Emulator</span>
@@ -173,14 +175,14 @@ export class AboutModal extends BaseElement {
                             </span>
                           </p>
                           <p>
-                            You will probably have to navigate menus and/or
-                            press physical buttons, but most clocks provide a
-                            way to force a synchronization attempt.
-                          </p>
-                          <p>
                             If your clock has them, try to choose station and/or
                             time zone settings that make sense for your
                             location.
+                          </p>
+                          <p>
+                            Most clocks provide a way to force a synchronization
+                            attempt. You will probably have to navigate menus
+                            and/or press physical buttons.
                           </p>
                         </span>
                       </li>
@@ -388,6 +390,7 @@ export class AboutModal extends BaseElement {
                       </span>
                       <span class="flex flex-col gap-2 min-w-0">
                         <p>
+                          Because it works by exploiting this leakage,
                           <span class="font-semibold">
                             Time Station Emulator
                           </span>

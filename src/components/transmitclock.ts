@@ -173,10 +173,6 @@ export class TransmitClock extends BaseElement {
       this.ready ? this.#makeParts() : kSkeletons;
 
     const isH12 = amPm != null;
-    const dateWidth = classMap({
-      "w-full": !this.ready,
-      "max-w-0": this.ready,
-    });
     const amPmHidden = classMap({ hidden: !isH12 });
 
     return html`
@@ -211,7 +207,7 @@ export class TransmitClock extends BaseElement {
           ></info-dropdown>
         </div>
         <div
-          class="flex flex-col px-4 gap-2 sm:gap-4 max-w-fit min-w-fit font-semibold items-center"
+          class="flex flex-col px-4 gap-2 sm:gap-4 max-w-fit min-w-fit font-semibold"
         >
           <div class="flex gap-2 sm:gap-3 items-center">
             <div class="font-mono font-black text-4xl sm:text-8xl">${hh}</div>
@@ -224,13 +220,9 @@ export class TransmitClock extends BaseElement {
             </div>
           </div>
 
-          <div
-            class="flex ${dateWidth} justify-center text-2xl sm:text-5xl overflow-visible whitespace-nowrap"
-          >
-            ${date}
-          </div>
+          <span class="text-2xl sm:text-5xl">${date}</span>
 
-          <span class="ml-auto text-xl sm:text-3xl">${tz}${offset}</span>
+          <span class="text-xl sm:text-3xl">${tz}${offset}</span>
         </div>
       </div>
     `;

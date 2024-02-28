@@ -105,7 +105,7 @@ export class IndicatorIcon extends BaseElement {
     const animate = classMap({ "animate-pulse": this.pulse });
 
     return html`
-      <div class="grid w-36 h-36 sm:w-48 sm:h-48 place-items-center">
+      <div class="grid w-full h-full place-items-center">
         <span class="drop-shadow-aura fill-current ${animate}">
           ${this.ready ? this.#makeIcon() : kSpinner}
         </span>

@@ -43,8 +43,8 @@ export default defineConfig({
         short_name: "Time Station Emulator",
         description:
           'Turns almost any phone or tablet into a low-frequency radio transmitter broadcasting a time signal that can synchronize most radio-controlled ("atomic") clocks and watches. Runs entirely in your browser with no installation or signup.',
-        theme_color: "#4d7399",
-        background_color: "#4d7399",
+        theme_color: "#202020",
+        background_color: "#202020",
         icons: [
           {
             src: "pwa-64x64.png",

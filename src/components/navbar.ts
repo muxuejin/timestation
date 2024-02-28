@@ -92,11 +92,11 @@ export class NavBar extends BaseElement {
             >
               <input type="checkbox" />
 
-              <span class="swap-off w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
+              <span class="swap-off w-8 h-8 sm:w-10 sm:h-10">
                 ${svgIcons.menu}
               </span>
 
-              <span class="swap-on w-8 h-8 sm:w-10 sm:h-10 drop-shadow-aura">
+              <span class="swap-on w-8 h-8 sm:w-10 sm:h-10">
                 ${svgIcons.close}
               </span>
             </div>
@@ -144,14 +144,6 @@ export class NavBar extends BaseElement {
               </li>
             </ul>
           </div>
-        </div>
-
-        <div class="navbar-center">
-          <span
-            class="font-serif text-xl min-[370px]:text-2xl min-[430px]:text-3xl min-[500px]:text-4xl sm:text-5xl inline-flex drop-shadow-aura align-text-bottom"
-          >
-            Time Station Emulator
-          </span>
         </div>
 
         <div class="navbar-end">

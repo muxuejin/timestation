@@ -60,19 +60,6 @@
 }
 
 /*
- * Fixedsys Excelsior
- * https://github.com/kika/fixedsys
- * Modified to contain only the glyphs in "Time Station Emulator".
- * License: Public Domain
- */
-@font-face {
-  font-family: "Time Station Emulator";
-  font-style: normal;
-  font-display: swap;
-  src: url(/fonts/timestationemulator.woff2) format("woff2");
-}
-
-/*
  * Victor Mono
  * https://rubjo.github.io/victor-mono/
  * Modified to contain only the glyphs "0123456789".
@@ -97,11 +84,12 @@
   }
 
   ::-webkit-scrollbar {
-    @apply w-1;
+    @apply w-2;
   }
 
   ::-webkit-scrollbar-thumb {
     @apply bg-slate-500;
+    @apply rounded-lg;
   }
 
   ::-webkit-scrollbar-thumb:hover {

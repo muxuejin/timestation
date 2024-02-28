@@ -1,9 +1,10 @@
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { classMap } from "lit/directives/class-map.js";
 
-import "@components/animatedbackground";
 import "@components/indicatoricon";
 import "@components/infodropdown";
+import "@components/loadingicon";
 import "@components/navbar";
 import "@components/startstopbutton";
 import "@components/transmitclock";
@@ -20,6 +21,8 @@ import {
 import { svgIcons } from "@shared/icons";
 import serverTimeTask from "@shared/servertime";
 import "@shared/styles.css";
+
+type MainState = "loading" | "normal" | "error";
 
 function registerServiceWorker() {
   navigator.serviceWorker
@@ -58,12 +61,12 @@ function checkBrowserSupport() {
   }
 }
 
-const kDelayMs = 8000;
+const kDelayMs = 5000;
 
 @customElement("time-signal")
 export class TimeSignal extends BaseElement {
   @state()
-  private accessor showError = false;
+  accessor mainState: MainState = "loading";
 
   #timeoutId?: ReturnType<typeof setTimeout>;
 
@@ -103,6 +106,7 @@ export class TimeSignal extends BaseElement {
     const wasmReady = this.#editDistanceReady && this.#timeSignalReady;
     const prereqsReady = wasmReady && this.#serverTimeReady;
     if (prereqsReady) {
+      if (this.mainState === "loading") this.mainState = "normal";
       this.publish(ReadyBusyEvent, this.#settingsReady);
       clearTimeout(this.#timeoutId);
     }
@@ -112,7 +116,7 @@ export class TimeSignal extends BaseElement {
     super.connectedCallback();
 
     this.#timeoutId = setTimeout(() => {
-      if (!checkBrowserSupport()) this.showError = true;
+      if (!checkBrowserSupport()) this.mainState = "error";
     }, kDelayMs);
 
     if (import.meta.env.MODE === "production") registerServiceWorker();
@@ -127,47 +131,65 @@ export class TimeSignal extends BaseElement {
   }
 
   protected render() {
-    const contents =
-      this.showError ?
-        html`
-          <div
-            class="[@media((min-width:800px)_and_(max-height:600px))]:col-span-2"
-          >
-            <span class="font-bold text-center text-lg sm:text-2xl">
-              Something went wrong!
-            </span>
-            <span class="w-36 h-36 sm:w-48 sm:h-48 drop-shadow-aura">
-              ${svgIcons.sad}
-            </span>
-            <span class="font-bold text-center text-lg sm:text-2xl">
-              Try reloading this page.
-            </span>
-          </div>
-        `
-      : html`
-          <transmit-clock></transmit-clock>
-          <indicator-icon
-            class="[@media((min-width:800px)_and_(max-height:600px))]:col-start-2"
-          ></indicator-icon>
-          <start-stop-button
-            class="[@media((min-width:800px)_and_(max-height:600px))]:col-span-2"
-          ></start-stop-button>
-        `;
+    const showIfLoading = classMap({ hidden: this.mainState !== "loading" });
+    const showIfNormal = classMap({ hidden: this.mainState !== "normal" });
+    const showIfError = classMap({ hidden: this.mainState !== "error" });
+
+    /*
+     * Unfortunately, adding a custom screen variant to Tailwind for the height
+     * media query necessary for small widescreen breaks min-* and max-*, and
+     * we are forced to make the query an arbitrary CSS value.
+     * cf. https://github.com/tailwindlabs/tailwindcss/pull/9558#restrictions
+     */
 
     return html`
-      <animated-background></animated-background>
+      <div class="flex flex-col w-full h-full absolute">
+        <loading-icon class="m-auto w-1/2 h-1/2 ${showIfLoading}">
+        </loading-icon>
 
-      <nav-bar></nav-bar>
-
-      <div
-        class="flex justify-center my-8 [@media(((max-width:639px)_and_(min_height:600px)_or_(min-height:640px))]:my-12 [@media(((min-width:800px)_and_(max-height:600px))_or_(min-height:720px))]:my-16"
-      >
         <div
-          class="grid grid-cols-1 [@media((min-width:800px)_and_(max-height:600px))]:grid-cols-fit place-items-center gap-4 [@media((max-width:639px)_and_(min-height:512px))]:gap-8 [@media((max-width:639px)_and_(min-height:640px))]:gap-12 [@media(((min-width:800px)_and_(max-height:600px))_or_(min-height:800px))]:gap-16"
+          class="grid grid-cols-1 m-auto h-3/4 min-h-[408px] sm:min-h-[600px] [@media((min-width:640px)_and_(max-height:600px))]:grid-cols-fit [@media((min-width:640px)_and_(max-height:600px))]:auto-cols-min [@media((min-width:640px)_and_(max-height:600px))]:min-h-[400px] max-h-[960px] place-items-center ${showIfNormal}"
         >
-          ${contents}
+          <span
+            class="text-center align-text-bottom font-semibold text-2xl min-[480px]:text-3xl sm:text-4xl [@media((min-width:640px)_and_(max-height:600px))]:col-span-3"
+          >
+            Time Station Emulator
+          </span>
+
+          <transmit-clock
+            class="[@media((min-width:640px)_and_(max-height:600px))]:col-span-3"
+          ></transmit-clock>
+
+          <!-- spacer -->
+          <span
+            class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:w-16 [@media((min-width:640px)_and_(max-height:600px))]:h-16 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4"
+          ></span>
+
+          <indicator-icon
+            class="w-36 h-36 [@media((min-width:640px)_and_(max-height:600px))]:w-16 [@media((min-width:640px)_and_(max-height:600px))]:h-16 sm:w-48 sm:h-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4"
+          ></indicator-icon>
+
+          <start-stop-button
+            class="[@media((min-width:640px)_and_(max-height:600px))]:row-start-3 [@media((min-width:640px)_and_(max-height:600px))]:col-start-2"
+          ></start-stop-button>
+        </div>
+
+        <div
+          class="grid m-auto h-1/2 min-h-[360px] place-items-center ${showIfError}"
+        >
+          <span class="font-bold text-center text-lg sm:text-2xl">
+            Browser may be unsupported!
+          </span>
+          <span class="w-36 h-36 sm:w-48 sm:h-48 drop-shadow-aura">
+            ${svgIcons.sad}
+          </span>
+          <span class="font-bold text-center text-lg sm:text-2xl">
+            Try reloading this page.
+          </span>
         </div>
       </div>
+
+      <nav-bar></nav-bar>
     `;
   }
 }

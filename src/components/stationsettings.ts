@@ -235,6 +235,7 @@ export class StationSettings extends BaseElement {
                 spaceselect
               ></menu-list>
             `}
+            closeonblur
           ></arrow-dropdown>
         </div>
 

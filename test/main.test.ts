@@ -30,7 +30,6 @@ describe("Main", () => {
   });
 
   it("renders components", () => {
-    expect(timeSignal.querySelector("animated-background")).not.toBeNull();
     expect(timeSignal.querySelector("nav-bar")).not.toBeNull();
     expect(timeSignal.querySelector("transmit-clock")).not.toBeNull();
     expect(timeSignal.querySelector("indicator-icon")).not.toBeNull();

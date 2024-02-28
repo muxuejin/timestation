@@ -36,8 +36,8 @@ export class DarkToggle extends BaseElement {
           @change=${this.#change}
           .checked=${this.dark}
         />
-        <span class="swap-off w-8 h-8 sm:w-10 sm:h-10">${svgIcons.sun}</span>
-        <span class="swap-on w-8 h-8 sm:w-10 sm:h-10">${svgIcons.moon}</span>
+        <span class="swap-off w-6 h-6 sm:w-8 sm:h-8">${svgIcons.sun}</span>
+        <span class="swap-on w-6 h-6 sm:w-8 sm:h-8">${svgIcons.moon}</span>
       </label>
     `;
   }
