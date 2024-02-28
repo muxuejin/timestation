@@ -1,6 +1,8 @@
 import { defineConfig } from "vitest/config";
-import babel from "vite-plugin-babel";
+
 import path from "path";
+import babel from "vite-plugin-babel";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   test: {
@@ -29,6 +31,9 @@ export default defineConfig({
         sourceMaps: "inline",
       },
       filter: /\.[jt]sx?$/,
+    }),
+    viteStaticCopy({
+      targets: [{ src: "./wasm/*.{js,wasm}", dest: "wasm" }],
     }),
   ],
   resolve: {

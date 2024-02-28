@@ -1,7 +1,10 @@
 import { defineConfig } from "vite";
-import babel from "vite-plugin-babel";
+
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import path from "path";
+import babel from "vite-plugin-babel";
+import { VitePWA } from "vite-plugin-pwa";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   build: {
@@ -24,6 +27,9 @@ export default defineConfig({
       filter: /\.[jt]sx?$/,
     }),
     basicSsl(),
+    viteStaticCopy({
+      targets: [{ src: "./wasm/*.{js,wasm}", dest: "wasm" }],
+    }),
   ],
   resolve: {
     alias: {
