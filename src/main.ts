@@ -143,9 +143,8 @@ export class TimeSignal extends BaseElement {
      */
 
     return html`
-      <div class="flex flex-col w-full h-full absolute">
-        <loading-icon class="m-auto w-1/2 h-1/2 ${showIfLoading}">
-        </loading-icon>
+      <div class="flex flex-col size-full absolute">
+        <loading-icon class="m-auto size-1/2 ${showIfLoading}"></loading-icon>
 
         <div
           class="grid grid-cols-1 m-auto h-3/4 min-h-[408px] sm:min-h-[600px] [@media((min-width:640px)_and_(max-height:600px))]:grid-cols-fit [@media((min-width:640px)_and_(max-height:600px))]:auto-cols-min [@media((min-width:640px)_and_(max-height:600px))]:min-h-[400px] max-h-[960px] place-items-center ${showIfNormal}"
@@ -162,11 +161,11 @@ export class TimeSignal extends BaseElement {
 
           <!-- spacer -->
           <span
-            class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:w-16 [@media((min-width:640px)_and_(max-height:600px))]:h-16 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4"
+            class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:size-16 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4"
           ></span>
 
           <indicator-icon
-            class="w-36 h-36 [@media((min-width:640px)_and_(max-height:600px))]:w-16 [@media((min-width:640px)_and_(max-height:600px))]:h-16 sm:w-48 sm:h-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4"
+            class="size-36 [@media((min-width:640px)_and_(max-height:600px))]:size-16 sm:size-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4"
           ></indicator-icon>
 
           <start-stop-button
@@ -180,7 +179,7 @@ export class TimeSignal extends BaseElement {
           <span class="font-bold text-center text-lg sm:text-2xl">
             Browser may be unsupported!
           </span>
-          <span class="w-36 h-36 sm:w-48 sm:h-48 drop-shadow-aura">
+          <span class="size-36 sm:size-48 drop-shadow-aura">
             ${svgIcons.sad}
           </span>
           <span class="font-bold text-center text-lg sm:text-2xl">

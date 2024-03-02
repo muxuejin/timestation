@@ -19,8 +19,8 @@ export class InfoDropdown extends BaseElement {
   content = html``;
 
   #makeIcon() {
-    const grow = classMap({ "sm:w-8": this.grow, "sm:h-8": this.grow });
-    return html`<span class="w-6 h-6 ${grow}">${svgIcons.info}</span>`;
+    const grow = classMap({ "sm:size-8": this.grow });
+    return html`<span class="size-6 ${grow}">${svgIcons.info}</span>`;
   }
 
   protected render() {

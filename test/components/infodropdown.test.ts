@@ -33,8 +33,7 @@ describe("Info dropdown", () => {
   it("renders with defaults", () => {
     expect(infoDropdown.grow).toBe(false);
     expect(infoDropdown.end).toBe(false);
-    expect(iconSpan.classList).not.toContain("sm:w-8");
-    expect(iconSpan.classList).not.toContain("sm:h-8");
+    expect(iconSpan.classList).not.toContain("sm:size-8");
     expect(dropdown.classList).not.toContain("dropdown-end");
     expect(isSvgEqual(svg, svgIcons.info)).toBe(true);
   });
@@ -48,8 +47,7 @@ describe("Info dropdown", () => {
     it("grow affects icon", async () => {
       infoDropdown.grow = true;
       await delay();
-      expect(iconSpan.classList).toContain("sm:w-8");
-      expect(iconSpan.classList).toContain("sm:h-8");
+      expect(iconSpan.classList).toContain("sm:size-8");
     });
 
     it("end affects positioning", async () => {

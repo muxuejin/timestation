@@ -85,20 +85,16 @@ export class NavBar extends BaseElement {
         <div class="navbar-start">
           <div class="dropdown">
             <div
-              class="btn btn-ghost p-0 w-12 h-12 sm:w-16 sm:h-16 swap"
+              class="btn btn-ghost p-0 size-12 sm:size-16 swap"
               role="button"
               tabindex="0"
               @click=${this.#clickMenu}
             >
               <input type="checkbox" />
 
-              <span class="swap-off w-8 h-8 sm:w-10 sm:h-10">
-                ${svgIcons.menu}
-              </span>
+              <span class="swap-off size-8 sm:size-10">${svgIcons.menu}</span>
 
-              <span class="swap-on w-8 h-8 sm:w-10 sm:h-10">
-                ${svgIcons.close}
-              </span>
+              <span class="swap-on size-8 sm:size-10">${svgIcons.close}</span>
             </div>
 
             <ul
@@ -107,7 +103,7 @@ export class NavBar extends BaseElement {
               <li>
                 <a class="px-2" @click=${this.#clickAbout}>
                   <span class="flex sm:py-1 items-center">
-                    <span class="w-6 h-6 sm:w-8 sm:h-8">${svgIcons.help}</span>
+                    <span class="size-6 sm:size-8">${svgIcons.help}</span>
                     <span class="mx-2">About</span>
                   </span>
                 </a>
@@ -116,9 +112,7 @@ export class NavBar extends BaseElement {
               <li>
                 <a class="px-2 ${disabled}" @click=${this.#clickSettings}>
                   <span class="flex sm:py-1 items-center">
-                    <span class="w-6 h-6 sm:w-8 sm:h-8">
-                      ${svgIcons.settings}
-                    </span>
+                    <span class="size-6 sm:size-8">${svgIcons.settings}</span>
                     <span class="mx-2">Settings</span>
                   </span>
                 </a>
@@ -132,13 +126,9 @@ export class NavBar extends BaseElement {
                   @click=${this.#clickGitHub}
                 >
                   <span class="flex sm:py-1 items-center">
-                    <span class="w-6 h-6 sm:w-8 sm:h-8">
-                      ${svgIcons.github}
-                    </span>
+                    <span class="size-6 sm:size-8">${svgIcons.github}</span>
                     <span class="mx-2">GitHub</span>
-                    <span class="w-4 h-4 sm:w-6 sm:h-6">
-                      ${svgIcons.open}
-                    </span>
+                    <span class="size-4 sm:size-6">${svgIcons.open}</span>
                   </span>
                 </a>
               </li>

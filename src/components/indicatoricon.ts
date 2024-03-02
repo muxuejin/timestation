@@ -92,7 +92,7 @@ export class IndicatorIcon extends BaseElement {
 
     return html`
       <svg
-        class="w-full h-full"
+        class="size-full"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 512 512"
       >
@@ -105,7 +105,7 @@ export class IndicatorIcon extends BaseElement {
     const animate = classMap({ "animate-pulse": this.pulse });
 
     return html`
-      <div class="grid w-full h-full place-items-center">
+      <div class="grid size-full place-items-center">
         <span class="drop-shadow-aura fill-current ${animate}">
           ${this.ready ? this.#makeIcon() : kSpinner}
         </span>

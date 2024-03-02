@@ -82,7 +82,7 @@ export class AboutModal extends BaseElement {
             <button></button>
 
             <button class="btn btn-sm btn-ghost p-0">
-              <span class="w-8 h-8">${svgIcons.close}</span>
+              <span class="size-8">${svgIcons.close}</span>
             </button>
           </form>
 
@@ -209,7 +209,7 @@ export class AboutModal extends BaseElement {
                             class="alert alert-warning grid-flow-col items-start text-start"
                             role="alert"
                           >
-                            <span class="w-6 h-6 sm:w-8 sm:h-8">
+                            <span class="size-6 sm:size-8">
                               ${svgIcons.warning}
                             </span>
                             <span class="flex flex-col gap-2 min-w-0">
@@ -385,9 +385,7 @@ export class AboutModal extends BaseElement {
                       class="alert grid-flow-col items-start text-start"
                       role="alert"
                     >
-                      <span class="w-6 h-6 sm:w-8 sm:h-8">
-                        ${svgIcons.info}
-                      </span>
+                      <span class="size-6 sm:size-8">${svgIcons.info}</span>
                       <span class="flex flex-col gap-2 min-w-0">
                         <p>
                           Because it works by exploiting this leakage,
