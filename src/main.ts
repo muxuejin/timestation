@@ -63,8 +63,8 @@ function checkBrowserSupport() {
 
 const kDelayMs = 5000;
 
-@customElement("time-signal")
-export class TimeSignal extends BaseElement {
+@customElement("time-station-emulator")
+export class TimeStationEmulator extends BaseElement {
   @state()
   accessor mainState: MainState = "loading";
 
@@ -195,6 +195,6 @@ export class TimeSignal extends BaseElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "time-signal": TimeSignal;
+    "time-station-emulator": TimeStationEmulator;
   }
 }

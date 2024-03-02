@@ -5,7 +5,7 @@ import { FakeAppSettings, delay } from "@test/utils";
 import EventBus from "@/shared/eventbus";
 
 import "@/main";
-import { TimeSignal } from "@/main";
+import { TimeStationEmulator } from "@/main";
 
 import {
   EditDistanceReadyEvent,
@@ -17,29 +17,29 @@ import {
 import "@shared/styles.css";
 
 describe("Main", () => {
-  let timeSignal: TimeSignal;
+  let main: TimeStationEmulator;
 
   beforeEach(async () => {
-    timeSignal = document.createElement("time-signal");
-    document.body.appendChild(timeSignal);
+    main = document.createElement("time-station-emulator");
+    document.body.appendChild(main);
     await delay();
   });
 
   afterEach(() => {
-    timeSignal.remove();
+    main.remove();
   });
 
   it("renders components", () => {
-    expect(timeSignal.querySelector("nav-bar")).not.toBeNull();
-    expect(timeSignal.querySelector("transmit-clock")).not.toBeNull();
-    expect(timeSignal.querySelector("indicator-icon")).not.toBeNull();
-    expect(timeSignal.querySelector("start-stop-button")).not.toBeNull();
+    expect(main.querySelector("nav-bar")).not.toBeNull();
+    expect(main.querySelector("transmit-clock")).not.toBeNull();
+    expect(main.querySelector("indicator-icon")).not.toBeNull();
+    expect(main.querySelector("start-stop-button")).not.toBeNull();
   });
 
   it("gets settings when attached", async () => {
     FakeAppSettings.get.mockClear();
-    timeSignal.remove();
-    document.body.appendChild(timeSignal);
+    main.remove();
+    document.body.appendChild(main);
     await delay();
     expect(FakeAppSettings.get).toHaveBeenCalledWith("sync");
     expect(FakeAppSettings.get).toHaveBeenCalledOnce();
