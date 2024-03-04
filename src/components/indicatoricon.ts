@@ -106,7 +106,7 @@ export class IndicatorIcon extends BaseElement {
 
     return html`
       <div class="grid size-full place-items-center">
-        <span class="drop-shadow-aura fill-current ${animate}">
+        <span class="${animate} fill-current drop-shadow-aura">
           ${this.ready ? this.#makeIcon() : kSpinner}
         </span>
       </div>

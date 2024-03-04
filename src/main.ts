@@ -143,14 +143,14 @@ export class TimeStationEmulator extends BaseElement {
      */
 
     return html`
-      <div class="flex flex-col size-full absolute">
-        <loading-icon class="m-auto size-1/2 ${showIfLoading}"></loading-icon>
+      <div class="absolute flex size-full flex-col">
+        <loading-icon class="${showIfLoading} m-auto size-1/2"></loading-icon>
 
         <div
-          class="grid grid-cols-1 m-auto h-3/4 min-h-[408px] sm:min-h-[600px] [@media((min-width:640px)_and_(max-height:600px))]:grid-cols-fit [@media((min-width:640px)_and_(max-height:600px))]:auto-cols-min [@media((min-width:640px)_and_(max-height:600px))]:min-h-[400px] max-h-[960px] place-items-center ${showIfNormal}"
+          class="${showIfNormal} m-auto grid h-3/4 max-h-[960px] min-h-[408px] grid-cols-1 place-items-center sm:min-h-[600px] [@media((min-width:640px)_and_(max-height:600px))]:min-h-[400px] [@media((min-width:640px)_and_(max-height:600px))]:auto-cols-min [@media((min-width:640px)_and_(max-height:600px))]:grid-cols-fit"
         >
           <span
-            class="text-center align-text-bottom font-semibold text-2xl min-[480px]:text-3xl sm:text-4xl [@media((min-width:640px)_and_(max-height:600px))]:col-span-3"
+            class="text-center align-text-bottom text-2xl font-semibold min-[480px]:text-3xl sm:text-4xl [@media((min-width:640px)_and_(max-height:600px))]:col-span-3"
           >
             Time Station Emulator
           </span>
@@ -161,28 +161,28 @@ export class TimeStationEmulator extends BaseElement {
 
           <!-- spacer -->
           <span
-            class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:size-16 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4"
+            class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4 [@media((min-width:640px)_and_(max-height:600px))]:size-16"
           ></span>
 
           <indicator-icon
-            class="size-36 [@media((min-width:640px)_and_(max-height:600px))]:size-16 sm:size-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4"
+            class="size-36 sm:size-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4 [@media((min-width:640px)_and_(max-height:600px))]:size-16 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start"
           ></indicator-icon>
 
           <start-stop-button
-            class="[@media((min-width:640px)_and_(max-height:600px))]:row-start-3 [@media((min-width:640px)_and_(max-height:600px))]:col-start-2"
+            class="[@media((min-width:640px)_and_(max-height:600px))]:col-start-2 [@media((min-width:640px)_and_(max-height:600px))]:row-start-3"
           ></start-stop-button>
         </div>
 
         <div
-          class="grid m-auto h-1/2 min-h-[360px] place-items-center ${showIfError}"
+          class="${showIfError} m-auto grid h-1/2 min-h-[360px] place-items-center"
         >
-          <span class="font-bold text-center text-lg sm:text-2xl">
+          <span class="text-center text-lg font-bold sm:text-2xl">
             Browser may be unsupported!
           </span>
-          <span class="size-36 sm:size-48 drop-shadow-aura">
+          <span class="size-36 drop-shadow-aura sm:size-48">
             ${svgIcons.sad}
           </span>
-          <span class="font-bold text-center text-lg sm:text-2xl">
+          <span class="text-center text-lg font-bold sm:text-2xl">
             Try reloading this page.
           </span>
         </div>

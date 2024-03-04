@@ -85,7 +85,7 @@ export class NavBar extends BaseElement {
         <div class="navbar-start">
           <div class="dropdown">
             <div
-              class="btn btn-ghost p-0 size-12 sm:size-16 swap"
+              class="btn btn-ghost swap size-12 p-0 sm:size-16"
               role="button"
               tabindex="0"
               @click=${this.#clickMenu}
@@ -98,11 +98,11 @@ export class NavBar extends BaseElement {
             </div>
 
             <ul
-              class="p-2 drop-shadow menu dropdown-content z-[1] bg-base-100 rounded-box font-medium sm:text-lg"
+              class="menu dropdown-content z-[1] rounded-box bg-base-100 p-2 font-medium drop-shadow sm:text-lg"
             >
               <li>
                 <a class="px-2" @click=${this.#clickAbout}>
-                  <span class="flex sm:py-1 items-center">
+                  <span class="flex items-center sm:py-1">
                     <span class="size-6 sm:size-8">${svgIcons.help}</span>
                     <span class="mx-2">About</span>
                   </span>
@@ -110,8 +110,8 @@ export class NavBar extends BaseElement {
               </li>
 
               <li>
-                <a class="px-2 ${disabled}" @click=${this.#clickSettings}>
-                  <span class="flex sm:py-1 items-center">
+                <a class="${disabled} px-2" @click=${this.#clickSettings}>
+                  <span class="flex items-center sm:py-1">
                     <span class="size-6 sm:size-8">${svgIcons.settings}</span>
                     <span class="mx-2">Settings</span>
                   </span>
@@ -125,7 +125,7 @@ export class NavBar extends BaseElement {
                   target="_blank"
                   @click=${this.#clickGitHub}
                 >
-                  <span class="flex sm:py-1 items-center">
+                  <span class="flex items-center sm:py-1">
                     <span class="size-6 sm:size-8">${svgIcons.github}</span>
                     <span class="mx-2">GitHub</span>
                     <span class="size-4 sm:size-6">${svgIcons.open}</span>
@@ -137,7 +137,7 @@ export class NavBar extends BaseElement {
         </div>
 
         <div class="navbar-end">
-          <dark-toggle class="pr-2 inline-flex drop-shadow-aura"></dark-toggle>
+          <dark-toggle class="inline-flex pr-2 drop-shadow-aura"></dark-toggle>
         </div>
       </div>
 

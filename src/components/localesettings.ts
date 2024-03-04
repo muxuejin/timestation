@@ -60,15 +60,15 @@ export class LocaleSettings extends BaseElement {
 
     return html`
       <div class="flex flex-col">
-        <div class="flex items-center h-12">
-          <h3 class="font-bold text-lg sm:text-xl">Locale</h3>
+        <div class="flex h-12 items-center">
+          <h3 class="text-lg font-bold sm:text-xl">Locale</h3>
 
           <info-dropdown
             class="grow"
             classes="max-w-[14rem] min-[440px]:max-w-max"
             .content=${html`
               <h4 class="font-bold">Locale</h4>
-              <span class="text-sm float-left">
+              <span class="float-left text-sm">
                 Changes only how transmitted time is displayed.
               </span>
             `}

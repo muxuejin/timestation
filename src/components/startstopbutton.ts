@@ -115,7 +115,7 @@ export class StartStopButton extends BaseElement {
 
     return html`
       <button
-        class="btn btn-md btn-wide sm:btn-lg sm:w-[24rem] drop-shadow ${classes}"
+        class="${classes} btn btn-md btn-wide drop-shadow sm:btn-lg sm:w-[24rem]"
         @click=${this.#click}
       >
         ${buttonText}

@@ -100,7 +100,7 @@ export class LocaleSearchbox extends BaseElement {
     return html`
       <span class="flex grow items-center">
         <span class="grow text-sm font-semibold">${tag}</span>
-        <span class="text-xs sm:text-sm text-end">${name}</span>
+        <span class="text-end text-xs sm:text-sm">${name}</span>
       </span>
     `;
   };
@@ -115,14 +115,14 @@ export class LocaleSearchbox extends BaseElement {
 
   protected render() {
     return html`
-      <div class="flex mr-2 mb-2 label-text">
+      <div class="label-text mb-2 mr-2 flex">
         <span class="grow font-semibold">Current locale:</span>
         <span class="font-medium">${this.locale}</span>
       </div>
 
-      <div class="join join-focus-within w-full">
+      <div class="join-focus-within join w-full">
         <input
-          class="input border-0 focus-within:outline-none w-full font-semibold placeholder:text-sm sm:placeholder:text-md"
+          class="sm:placeholder:text-md input w-full border-0 font-semibold placeholder:text-sm focus-within:outline-none"
           type="search"
           title="BCP47-like locale tag, native language/region name"
           placeholder="en-US / 日本語 / Perú..."
@@ -135,13 +135,13 @@ export class LocaleSearchbox extends BaseElement {
           @blur=${this.#blur}
         />
 
-        <button class="join-item btn ms-0" @click=${this.#resetLocale}>
+        <button class="btn join-item ms-0" @click=${this.#resetLocale}>
           Reset
         </button>
       </div>
 
       <menu-list
-        classes="menu flex-nowrap drop-shadow z-[1] mt-1 pt-0 w-full bg-base-200 absolute max-h-[13.5rem] overflow-auto rounded-box rounded-t-none"
+        classes="menu absolute z-[1] mt-1 max-h-[13.5rem] w-full flex-nowrap overflow-auto rounded-box rounded-t-none bg-base-200 pt-0 drop-shadow"
         itemclasses="flex"
         .group=${LocaleSettingsGroup}
         .itemTemplate=${this.#makeSuggestion}

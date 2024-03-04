@@ -1,4 +1,6 @@
 {
   "experimentalTernaries": true,
-  "quoteProps": "consistent"
+  "plugins": ["prettier-plugin-tailwindcss"],
+  "quoteProps": "consistent",
+  "tailwindAttributes": ["classes", "itemclasses"]
 }

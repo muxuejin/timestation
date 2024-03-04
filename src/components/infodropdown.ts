@@ -20,7 +20,7 @@ export class InfoDropdown extends BaseElement {
 
   #makeIcon() {
     const grow = classMap({ "sm:size-8": this.grow });
-    return html`<span class="size-6 ${grow}">${svgIcons.info}</span>`;
+    return html`<span class="${grow} size-6">${svgIcons.info}</span>`;
   }
 
   protected render() {
@@ -29,9 +29,9 @@ export class InfoDropdown extends BaseElement {
     const classes = classMap(Object.fromEntries(entries));
 
     return html`
-      <div class="dropdown flex flex-col ${end}">
+      <div class="${end} dropdown flex flex-col">
         <div
-          class="btn btn-ghost btn-circle btn-sm hover:bg-transparent text-info"
+          class="btn btn-circle btn-ghost btn-sm text-info hover:bg-transparent"
           role="button"
           tabindex="0"
         >
@@ -39,7 +39,7 @@ export class InfoDropdown extends BaseElement {
         </div>
         <div class="block">
           <div
-            class="dropdown-content flex flex-col p-3 z-[1] drop-shadow bg-base-200 rounded-box w-max text-balance ${classes}"
+            class="${classes} dropdown-content z-[1] flex w-max flex-col text-balance rounded-box bg-base-200 p-3 drop-shadow"
           >
             ${this.content}
           </div>

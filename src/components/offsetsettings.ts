@@ -104,10 +104,10 @@ export class OffsetSettings extends BaseElement {
 
   #makeCollapseContent() {
     return html`
-      <div class="flex mt-4 ml-2 w-full justify-end items-center">
-        <div class="join join-focus-within" @focusout=${this.#requestUpdate}>
+      <div class="ml-2 mt-4 flex w-full items-center justify-end">
+        <div class="join-focus-within join" @focusout=${this.#requestUpdate}>
           <sign-button
-            classes="join-item btn w-12 p-0"
+            classes="btn join-item w-12 p-0"
             @click=${this.#requestUpdate}
             .value=${this.offset < 0}
           ></sign-button>
@@ -116,7 +116,7 @@ export class OffsetSettings extends BaseElement {
 
           <span class="ms-0">
             <numeric-input
-              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              classes="input join-item w-6 border-0 px-0 text-center font-bold focus-within:outline-none"
               min="0"
               max="23"
               @blur=${this.#requestUpdate}
@@ -128,7 +128,7 @@ export class OffsetSettings extends BaseElement {
 
           <span class="ms-0">
             <numeric-input
-              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              classes="input join-item w-6 border-0 px-0 text-center font-bold focus-within:outline-none"
               min="0"
               max="59"
               @blur=${this.#requestUpdate}
@@ -140,7 +140,7 @@ export class OffsetSettings extends BaseElement {
 
           <span class="ms-0">
             <numeric-input
-              classes="join-item input border-0 w-6 px-0 font-bold text-center focus-within:outline-none"
+              classes="input join-item w-6 border-0 px-0 text-center font-bold focus-within:outline-none"
               min="0"
               max="59"
               @blur=${this.#requestUpdate}
@@ -152,7 +152,7 @@ export class OffsetSettings extends BaseElement {
 
           <span class="ms-0">
             <numeric-input
-              classes="join-item input border-0 w-9 px-0 font-bold text-center focus-within:outline-none"
+              classes="input join-item w-9 border-0 px-0 text-center font-bold focus-within:outline-none"
               min="0"
               max="999"
               @blur=${this.#requestUpdate}
@@ -178,7 +178,7 @@ export class OffsetSettings extends BaseElement {
 
     return html`
       <div class="flex items-center">
-        <h3 class="font-bold text-lg sm:text-xl">Offset</h3>
+        <h3 class="text-lg font-bold sm:text-xl">Offset</h3>
 
         <info-dropdown
           class="grow"

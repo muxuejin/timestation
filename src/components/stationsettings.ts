@@ -106,7 +106,7 @@ export class StationSettings extends BaseElement {
   #makeStationListItem = (station: string) => {
     const icon = kStationIcons[station as Station];
     return html`
-      <span class="w-8 h-6">${icon}</span>
+      <span class="h-6 w-8">${icon}</span>
       <span class="grow">${station}</span>
     `;
   };
@@ -136,9 +136,9 @@ export class StationSettings extends BaseElement {
         grow
       ></info-dropdown>
 
-      <div class="join join-focus-within">
+      <div class="join-focus-within join">
         <sign-button
-          classes="join-item btn w-12 p-0"
+          classes="btn join-item w-12 p-0"
           .value=${this.dut1 < 0}
         ></sign-button>
 
@@ -146,7 +146,7 @@ export class StationSettings extends BaseElement {
 
         <span class="ms-0">
           <numeric-input
-            classes="join-item input border-0 w-12 px-0 font-bold text-center focus-within:outline-none"
+            classes="input join-item w-12 border-0 px-0 text-center font-bold focus-within:outline-none"
             min="0"
             max="999"
           ></numeric-input>
@@ -169,7 +169,7 @@ export class StationSettings extends BaseElement {
         ${knownJjyKhz.map(
           (kHz) => html`
             <input
-              class="join-item btn ms-0 w-18"
+              class="btn join-item ms-0 w-18"
               type="radio"
               name="jjy_khz"
               aria-label="${kHz}KHz"
@@ -213,13 +213,13 @@ export class StationSettings extends BaseElement {
     return html`
       <div class="flex flex-col">
         <div class="flex items-center">
-          <h3 class="grow font-bold text-lg sm:text-xl">Station</h3>
+          <h3 class="grow text-lg font-bold sm:text-xl">Station</h3>
           <arrow-dropdown
             classes="w-36 flex-nowrap after:shrink-0"
             .keydown=${this.#keydown}
             .text=${html`
-              <span class="flex gap-2 w-full items-center">
-                <span class="w-8 h-6 border border-base-100"
+              <span class="flex w-full items-center gap-2">
+                <span class="h-6 w-8 border border-base-100"
                   >${kStationIcons[this.station]}</span
                 >
                 <span class="grow">${this.station}</span>
@@ -227,7 +227,7 @@ export class StationSettings extends BaseElement {
             `}
             .content=${html`
               <menu-list
-                classes="dropdown-content menu mt-1 pt-1 w-36 drop-shadow z-[1] bg-base-200 rounded-box"
+                classes="menu dropdown-content z-[1] mt-1 w-36 rounded-box bg-base-200 pt-1 drop-shadow"
                 itemclasses="gap-4 px-2"
                 .group=${StationSettingsGroup}
                 .itemTemplate=${this.#makeStationListItem}
@@ -242,12 +242,12 @@ export class StationSettings extends BaseElement {
         <collapse-setting
           .group=${StationSettingsGroup}
           .content=${html`
-            <div class="h-12 mt-4 ml-2">
-              <span class="flex items-center ${hideDut1}">
+            <div class="ml-2 mt-4 h-12">
+              <span class="${hideDut1} flex items-center">
                 ${this.#makeDut1()}
               </span>
 
-              <span class="flex items-center ${hideJjyKhz}">
+              <span class="${hideJjyKhz} flex items-center">
                 ${this.#makeJjyKhz()}
               </span>
             </div>

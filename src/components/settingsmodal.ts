@@ -39,15 +39,15 @@ export class SettingsModal extends BaseElement {
         class="modal modal-bottom sm:modal-middle"
         @close=${this.#closeModal}
       >
-        <div class="modal-box max-h-screen flex flex-col gap-4">
-          <form class="flex items-center mb-8" method="dialog">
-            <h3 class="grow font-bold text-xl sm:text-2xl">Settings</h3>
+        <div class="modal-box flex max-h-screen flex-col gap-4">
+          <form class="mb-8 flex items-center" method="dialog">
+            <h3 class="grow text-xl font-bold sm:text-2xl">Settings</h3>
 
             <!-- Invisible dummy button takes autofocus when modal is opened -->
             <button></button>
 
             <button
-              class="btn btn-sm btn-ghost hover:bg-transparent"
+              class="btn btn-ghost btn-sm hover:bg-transparent"
               @click=${this.#clickReset}
             >
               Reset All
@@ -59,8 +59,8 @@ export class SettingsModal extends BaseElement {
           <offset-settings></offset-settings>
           <advanced-settings></advanced-settings>
 
-          <form class="flex gap-4 items-center mt-8" method="dialog">
-            <button class="ml-auto btn" @click=${this.#clickSave}>
+          <form class="mt-8 flex items-center gap-4" method="dialog">
+            <button class="btn ml-auto" @click=${this.#clickSave}>
               Save Settings
             </button>
             <button class="btn">Cancel</button>

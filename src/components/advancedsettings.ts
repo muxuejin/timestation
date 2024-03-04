@@ -55,7 +55,7 @@ export class AdvancedSettings extends BaseElement {
     return html`
       <div class="flex flex-col">
         <div class="flex items-center">
-          <h3 class="grow font-bold text-lg sm:text-xl">Advanced</h3>
+          <h3 class="grow text-lg font-bold sm:text-xl">Advanced</h3>
 
           <arrow-dropdown
             classes="flex-nowrap after:shrink-0"
@@ -66,8 +66,8 @@ export class AdvancedSettings extends BaseElement {
         <collapse-setting
           .group=${AdvancedSettingsGroup}
           .content=${html`
-            <div class="flex flex-col gap-4 mt-4 ml-2">
-              <div class="flex items-center h-12">
+            <div class="ml-2 mt-4 flex flex-col gap-4">
+              <div class="flex h-12 items-center">
                 <h4 class="font-semibold sm:text-lg">Noclip</h4>
 
                 <info-dropdown
@@ -91,7 +91,7 @@ export class AdvancedSettings extends BaseElement {
                 />
               </div>
 
-              <div class="flex items-center h-12">
+              <div class="flex h-12 items-center">
                 <h4 class="font-semibold sm:text-lg">Sync time</h4>
 
                 <info-dropdown
@@ -99,7 +99,7 @@ export class AdvancedSettings extends BaseElement {
                   classes="max-w-[11rem] min-[420px]:max-w-[20rem]"
                   .content=${html`
                     <h4 class="font-bold">Sync time</h4>
-                    <span class="text-sm float-left">
+                    <span class="float-left text-sm">
                       Sync time with server on next page reload.
                     </span>
                   `}

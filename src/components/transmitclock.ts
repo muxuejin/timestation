@@ -28,12 +28,12 @@ const kStationTimeZoneMap: Record<Station, TimeZone[]> = {
 } as const;
 
 const kSkeletons = {
-  hh: html`<div class="skeleton w-11 h-9 sm:w-28 sm:h-24"></div>`,
-  mm: html`<div class="skeleton w-11 h-9 sm:w-28 sm:h-24"></div>`,
-  ss: html`<div class="skeleton w-11 h-9 sm:w-28 sm:h-24"></div>`,
-  amPm: html`<div class="skeleton w-10 h-8 sm:w-14 sm:h-10 self-end"></div>`,
-  date: html`<div class="skeleton w-full h-8 sm:h-12"></div>`,
-  tz: html`<div class="skeleton w-14 sm:w-24 h-7 sm:h-9"></div>`,
+  hh: html`<div class="skeleton h-9 w-11 sm:h-24 sm:w-28"></div>`,
+  mm: html`<div class="skeleton h-9 w-11 sm:h-24 sm:w-28"></div>`,
+  ss: html`<div class="skeleton h-9 w-11 sm:h-24 sm:w-28"></div>`,
+  amPm: html`<div class="skeleton h-8 w-10 self-end sm:h-10 sm:w-14"></div>`,
+  date: html`<div class="skeleton h-8 w-full sm:h-12"></div>`,
+  tz: html`<div class="skeleton h-7 w-14 sm:h-9 sm:w-24"></div>`,
   offset: undefined,
 } as const;
 
@@ -183,17 +183,17 @@ export class TransmitClock extends BaseElement {
             .content=${html`
               <span class="flex flex-col gap-2">
                 <h4 class="font-bold sm:text-lg">Transmitted Time</h4>
-                <span class="text-sm sm:text-base text-wrap">
+                <span class="text-wrap text-sm sm:text-base">
                   The date, time, and time zone
                   <span class="font-bold">that will be transmitted</span>.
                 </span>
-                <span class="text-sm sm:text-base text-wrap">
+                <span class="text-wrap text-sm sm:text-base">
                   This is <span class="font-bold">sometimes</span> a
                   &ldquo;preview&rdquo; of how a clock (or watch) will display
                   the time it receives, and may be a useful point of reference
                   if you need to enter an offset.
                 </span>
-                <span class="text-sm sm:text-base text-wrap">
+                <span class="text-wrap text-sm sm:text-base">
                   See
                   <span class="font-bold">
                     About &rsaquo; Calculating Offsets
@@ -207,15 +207,15 @@ export class TransmitClock extends BaseElement {
           ></info-dropdown>
         </div>
         <div
-          class="flex flex-col px-4 gap-2 sm:gap-4 max-w-fit min-w-fit font-semibold"
+          class="flex min-w-fit max-w-fit flex-col gap-2 px-4 font-semibold sm:gap-4"
         >
-          <div class="flex gap-2 sm:gap-3 items-center">
-            <div class="font-mono font-black text-4xl sm:text-8xl">${hh}</div>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="font-mono text-4xl font-black sm:text-8xl">${hh}</div>
             <span class="text-3xl sm:text-5xl">:</span>
-            <div class="font-mono font-black text-4xl sm:text-8xl">${mm}</div>
+            <div class="font-mono text-4xl font-black sm:text-8xl">${mm}</div>
             <span class="text-3xl sm:text-5xl">:</span>
-            <div class="font-mono font-black text-4xl sm:text-8xl">${ss}</div>
-            <div class="${amPmHidden} text-2xl sm:text-4xl self-end">
+            <div class="font-mono text-4xl font-black sm:text-8xl">${ss}</div>
+            <div class="${amPmHidden} self-end text-2xl sm:text-4xl">
               ${amPm}
             </div>
           </div>

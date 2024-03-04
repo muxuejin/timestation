@@ -51,9 +51,9 @@ export class CollapseSetting extends BaseElement {
     });
 
     return html`
-      <div class="collapse ${collapseClasses}">
+      <div class="${collapseClasses} collapse">
         <div
-          class="collapse-content !p-0 relative inline-block"
+          class="collapse-content relative inline-block !p-0"
           @focusin=${this.#focusin}
         >
           ${this.content}

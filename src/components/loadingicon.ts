@@ -42,7 +42,7 @@ export class LoadingIcon extends BaseElement {
   protected render() {
     return html`
       <div
-        class="grid size-full place-items-center drop-shadow-aura fill-current"
+        class="grid size-full place-items-center fill-current drop-shadow-aura"
       >
         <svg
           class="size-full"

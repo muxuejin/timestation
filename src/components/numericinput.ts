@@ -132,7 +132,7 @@ export class NumericInput extends BaseElement {
     const classes = classMap(Object.fromEntries(entries));
     return html`
       <span
-        class="tooltip tooltip-error tooltip-open before:[&:not(:has(input:invalid))]:opacity-0 after:[&:not(:has(input:invalid))]:opacity-0"
+        class="tooltip tooltip-open tooltip-error before:[&:not(:has(input:invalid))]:opacity-0 after:[&:not(:has(input:invalid))]:opacity-0"
         data-tip=${`${this.min}${kNdash}${this.max}`}
       >
         <input

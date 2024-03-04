@@ -78,7 +78,7 @@ export class ArrowDropdown extends BaseElement {
     return html`
       <details ${ref(this.#dropdownRef)} class="dropdown">
         <summary
-          class="btn btn-ghost hover:bg-transparent dropdown-arrow ${classes}"
+          class="dropdown-arrow ${classes} btn btn-ghost hover:bg-transparent"
           @blur=${this.#blur}
           @click=${this.#click}
           @keydown=${{

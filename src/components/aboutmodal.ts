@@ -73,32 +73,32 @@ export class AboutModal extends BaseElement {
     return html`
       <dialog class="modal">
         <div
-          class="modal-box flex flex-col gap-4 w-[90%] max-w-[calc(100dvw-2rem)] max-h-[calc(100dvh-2rem)]"
+          class="modal-box flex max-h-[calc(100dvh-2rem)] w-[90%] max-w-[calc(100dvw-2rem)] flex-col gap-4"
         >
           <form class="flex items-center" method="dialog">
-            <h3 class="grow font-bold text-xl sm:text-2xl">About</h3>
+            <h3 class="grow text-xl font-bold sm:text-2xl">About</h3>
 
             <!-- Invisible dummy button takes autofocus when modal is opened -->
             <button></button>
 
-            <button class="btn btn-sm btn-ghost p-0">
+            <button class="btn btn-ghost btn-sm p-0">
               <span class="size-8">${svgIcons.close}</span>
             </button>
           </form>
 
           <div class="overflow-y-auto">
             <div class="join join-vertical max-w-full">
-              <div class="collapse collapse-arrow join-item">
+              <div class="collapse join-item collapse-arrow">
                 <input
                   name="about-accordion"
                   type="radio"
                   @change=${this.#changeSection}
                 />
-                <div class="collapse-title pl-0 font-bold text-lg">
+                <div class="collapse-title pl-0 text-lg font-bold">
                   Overview
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[0]}"
+                  class="${overflowY[0]} collapse-content text-pretty text-sm sm:text-base [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)]"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
@@ -128,17 +128,17 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div class="collapse join-item collapse-arrow">
                 <input
                   name="about-accordion"
                   type="radio"
                   @change=${this.#changeSection}
                 />
-                <div class="collapse-title pl-0 font-bold text-lg">
+                <div class="collapse-title pl-0 text-lg font-bold">
                   Quick Start
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[1]}"
+                  class="${overflowY[1]} collapse-content text-pretty text-sm sm:text-base [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)]"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
@@ -212,7 +212,7 @@ export class AboutModal extends BaseElement {
                             <span class="size-6 sm:size-8">
                               ${svgIcons.warning}
                             </span>
-                            <span class="flex flex-col gap-2 min-w-0">
+                            <span class="flex min-w-0 flex-col gap-2">
                               <p>
                                 <span class="font-bold">
                                   DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO
@@ -257,17 +257,17 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div class="collapse join-item collapse-arrow">
                 <input
                   name="about-accordion"
                   type="radio"
                   @change=${this.#changeSection}
                 />
-                <div class="collapse-title pl-0 font-bold text-lg">
+                <div class="collapse-title pl-0 text-lg font-bold">
                   Calculating Offsets
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[2]}"
+                  class="${overflowY[2]} collapse-content text-pretty text-sm sm:text-base [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)]"
                 >
                   <span class="flex flex-col gap-2">
                     <p>
@@ -347,19 +347,19 @@ export class AboutModal extends BaseElement {
                 </div>
               </div>
 
-              <div class="collapse collapse-arrow join-item">
+              <div class="collapse join-item collapse-arrow">
                 <input
                   name="about-accordion"
                   type="radio"
                   @change=${this.#changeSection}
                 />
-                <div class="collapse-title pl-0 font-bold text-lg">
+                <div class="collapse-title pl-0 text-lg font-bold">
                   Technical Details
                 </div>
                 <div
-                  class="collapse-content text-sm sm:text-base text-pretty [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)] ${overflowY[3]}"
+                  class="${overflowY[3]} collapse-content text-pretty text-sm sm:text-base [@media(min-height:600px)]:max-h-[calc(100dvh-23rem)]"
                 >
-                  <span class="flex flex-col gap-2 min-w-0">
+                  <span class="flex min-w-0 flex-col gap-2">
                     <p>
                       <span class="font-semibold">Time Station Emulator</span>
                       generates an audio waveform intentionally crafted to
@@ -386,7 +386,7 @@ export class AboutModal extends BaseElement {
                       role="alert"
                     >
                       <span class="size-6 sm:size-8">${svgIcons.info}</span>
-                      <span class="flex flex-col gap-2 min-w-0">
+                      <span class="flex min-w-0 flex-col gap-2">
                         <p>
                           Because it works by exploiting this leakage,
                           <span class="font-semibold">

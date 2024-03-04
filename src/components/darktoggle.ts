@@ -27,7 +27,7 @@ export class DarkToggle extends BaseElement {
   protected render() {
     return html`
       <label
-        class="swap swap-rotate [&:not(:hover)]:text-secondary hover:animate-boingo"
+        class="swap swap-rotate hover:animate-boingo [&:not(:hover)]:text-secondary"
       >
         <input
           class="theme-controller"
