@@ -16,7 +16,6 @@ jobs:
 
       - name: Setup emsdk
         uses: mymindstorm/setup-emsdk@v14
-        run: emcc -v
 
       - name: Build WebAssembly modules
         run: npm run prebuild
@@ -33,7 +32,6 @@ jobs:
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
-        run: chrome --version
 
       - name: Run Tests
         run: npm run test
@@ -49,7 +47,6 @@ jobs:
 
       - name: Setup emsdk
         uses: mymindstorm/setup-emsdk@v14
-        run: emcc -v
 
       - name: Setup Node
         uses: actions/setup-node@v4
