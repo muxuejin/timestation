@@ -77,16 +77,9 @@ Firefox during testing.
    The volume should be set so that the clock picks up the cleanest signal.
    Usually, this occurs at or near the maximum possible volume.
 
-> [!WARNING]
-> **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**
-> Use a visual volume indicator instead.
->
-> The generated waveform has full dynamic range, but is pitched high enough to
-> be difficult to perceive.
->
-> Many common devices are capable of playing it back loud enough to potentially
-> cause **permanent hearing damage**, even if you &ldquo;can&rsquo;t hear
-> anything&rdquo;!
+   | WARNING |
+   | --- |
+   | **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**<br>Use a visual volume indicator instead.<br><br>The generated waveform has full dynamic range, but is pitched high enough to be difficult to perceive.<br><br>Many common devices are capable of playing it back loud enough to potentially cause **permanent hearing damage**, even if you &ldquo;can&rsquo;t hear anything&rdquo;! |
 
 4. **Start transmitting and hold the speaker in position.**
 
@@ -112,18 +105,9 @@ during playback will then be the original fundamental, which should leak to the
 environment as a short-range radio transmission via the ad-hoc antenna formed by
 the physical wires and circuit traces in the audio output path.
 
-> [!NOTE]
-> Because it works by exploiting this leakage, **Time Station Emulator** works
-> best with a **built-in speaker** of a **phone or tablet**.
->
-> In some cases, **wired headphones or earbuds** may also be suitable.
->
-> Higher-frequency harmonics are considered artifacts beyond the range of human
-> hearing, so they are routinely suppressed by audio compression algorithms and
-> better equipment.
->
-> Bluetooth devices and audiophile-grade equipment are therefore less likely to
-> work.
+| NOTE |
+| --- |
+| Because it relies upon this leakage, **Time Station Emulator** works best with a **built-in speaker** of a **phone or tablet**.<br><br>In some cases, **wired headphones or earbuds** may also be suitable.<br><br>Higher-frequency harmonics are considered artifacts beyond the range of human hearing, so they are routinely suppressed by audio compression algorithms and better equipment.<br><br> Bluetooth devices and audiophile-grade equipment are therefore less likely to work. |
 
 </details>
 
