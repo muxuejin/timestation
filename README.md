@@ -34,16 +34,16 @@ setting such clocks when/where a suitable signal is not otherwise available.
 
 ## Requirements
 
-Almost any device running a browser from &ge;2019 should work. The hard
-requirements of note are browser WebAssembly support and DAC support for
-&ge;44.1 KHz PCM.
+The hard requirements of note are browser WebAssembly support and DAC support
+for &ge;44.1 KHz PCM. Almost any device running a browser from &ge;2019 should
+work.
 
-In practice, **Time Station Emulator** works best with a **built-in speaker** of
-a **phone or tablet**. See [Technical Details](#technical-details) for an
-explanation.
+However, as of early 2024, **Safari on iOS** and **Firefox on Android** have
+multiple breaking issues and **will not work**.
 
-As of early 2024, breaking performance/timing issues were also seen with Mobile
-Firefox during testing.
+For other devices, **Time Station Emulator** works best with a
+**built-in speaker** of a **phone or tablet**. See
+[Technical Details](#technical-details) for an explanation.
 
 ## Usage
 
