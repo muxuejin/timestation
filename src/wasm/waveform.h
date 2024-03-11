@@ -10,9 +10,9 @@
 #define TSIG_WAVEFORM_LERP_RATE             0.015F
 #define TSIG_WAVEFORM_LERP_MIN_DELTA        0.005F
 #define TSIG_WAVEFORM_SYNC_MARKER           0xff
-#define TSIG_WAVEFORM_SUBHARMONIC_THRESHOLD 10000
+#define TSIG_WAVEFORM_SUBHARMONIC_THRESHOLD 20000
+#define TSIG_WAVEFORM_SUBHARMONIC_THIRD     3
 #define TSIG_WAVEFORM_SUBHARMONIC_FIFTH     5
-#define TSIG_WAVEFORM_SUBHARMONIC_SEVENTH   7
 
 /* Our internal time quantum is a "tick". */
 #define TSIG_WAVEFORM_TICK_MS       50
@@ -134,10 +134,10 @@ static inline uint32_t tsig_calculate_target_hz(tsig_params_t *params) {
 }
 
 static inline uint8_t tsig_calculate_subharmonic(uint32_t target_hz) {
-  target_hz /= TSIG_WAVEFORM_SUBHARMONIC_FIFTH;
+  target_hz /= TSIG_WAVEFORM_SUBHARMONIC_THIRD;
   return target_hz <= TSIG_WAVEFORM_SUBHARMONIC_THRESHOLD
-             ? TSIG_WAVEFORM_SUBHARMONIC_FIFTH
-             : TSIG_WAVEFORM_SUBHARMONIC_SEVENTH;
+             ? TSIG_WAVEFORM_SUBHARMONIC_THIRD
+             : TSIG_WAVEFORM_SUBHARMONIC_FIFTH;
 }
 
 static inline uint32_t tsig_gcd(uint32_t a, uint32_t b) {
