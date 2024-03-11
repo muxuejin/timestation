@@ -4,7 +4,6 @@ import { classMap } from "lit/directives/class-map.js";
 
 import "@components/indicatoricon";
 import "@components/infodropdown";
-import "@components/loadingicon";
 import "@components/navbar";
 import "@components/startstopbutton";
 import "@components/transmitclock";
@@ -18,7 +17,7 @@ import {
   SettingsReadyEvent,
   TimeSignalReadyEvent,
 } from "@shared/events";
-import { svgIcons } from "@shared/icons";
+import { svgIcons, svgLogo } from "@shared/icons";
 import serverTimeTask from "@shared/servertime";
 import "@shared/styles.css";
 
@@ -144,7 +143,11 @@ export class TimeStationEmulator extends BaseElement {
 
     return html`
       <div class="absolute flex size-full flex-col">
-        <loading-icon class="${showIfLoading} m-auto size-1/2"></loading-icon>
+        <div
+          class="${showIfLoading} m-auto w-1/2 fill-current drop-shadow-aura"
+        >
+          ${svgLogo}
+        </div>
 
         <div
           class="${showIfNormal} m-auto grid h-3/4 max-h-[960px] min-h-[408px] grid-cols-1 place-items-center sm:min-h-[600px] [@media((min-width:640px)_and_(max-height:600px))]:min-h-[400px] [@media((min-width:640px)_and_(max-height:600px))]:auto-cols-min [@media((min-width:640px)_and_(max-height:600px))]:grid-cols-fit"

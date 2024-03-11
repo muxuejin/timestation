@@ -1,6 +1,14 @@
-# Time Station Emulator
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+<h1 align="center">
+  Time Station Emulator
+  <br>
+  <br>
+  <img src="timestation.svg" alt="Logo" width="128" height="128">
+  <br>
+  <br>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
+  </a>
+</h1>
 
 ## Overview
 
