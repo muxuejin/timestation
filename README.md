@@ -50,11 +50,7 @@ Firefox during testing.
 **Time Station Emulator** is hosted at https://timestation.pages.dev/.
 
 <details>
-  <summary>
-    <span style="font-variant:small-caps; font-weight:600;">
-      click to expand/hide
-    </span>
-  </summary>
+  <summary>click to expand/hide</summary>
 
 1. **Choose emulator settings.**
 
@@ -81,7 +77,8 @@ Firefox during testing.
    The volume should be set so that the clock picks up the cleanest signal.
    Usually, this occurs at or near the maximum possible volume.
 
-> [!WARNING] **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**
+> [!WARNING]
+> **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**
 > Use a visual volume indicator instead.
 >
 > The generated waveform has full dynamic range, but is pitched high enough to
@@ -100,11 +97,7 @@ Firefox during testing.
 ## Technical Details
 
 <details>
-  <summary>
-    <span style="font-variant:small-caps; font-weight:600;">
-      click to expand/hide
-    </span>
-  </summary>
+  <summary>click to expand/hide</summary>
 
 **Time Station Emulator** generates an audio waveform intentionally crafted to
 create, when played back through consumer-grade audio hardware, the right kind
@@ -119,8 +112,9 @@ during playback will then be the original fundamental, which should leak to the
 environment as a short-range radio transmission via the ad-hoc antenna formed by
 the physical wires and circuit traces in the audio output path.
 
-> [!NOTE] Because it works by exploiting this leakage, **Time Station Emulator**
-> works best with a **built-in speaker** of a **phone or tablet**.
+> [!NOTE]
+> Because it works by exploiting this leakage, **Time Station Emulator** works
+> best with a **built-in speaker** of a **phone or tablet**.
 >
 > In some cases, **wired headphones or earbuds** may also be suitable.
 >
