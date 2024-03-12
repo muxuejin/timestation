@@ -6,6 +6,7 @@ import "@components/indicatoricon";
 import "@components/infodropdown";
 import "@components/navbar";
 import "@components/startstopbutton";
+import "@components/toastmanager";
 import "@components/transmitclock";
 
 import AppSettings from "@shared/appsettings";
@@ -16,6 +17,7 @@ import {
   ServerTimeReadyEvent,
   SettingsReadyEvent,
   TimeSignalReadyEvent,
+  ToastEvent,
 } from "@shared/events";
 import { svgIcons, svgLogo } from "@shared/icons";
 import serverTimeTask from "@shared/servertime";
@@ -37,30 +39,53 @@ function registerServiceWorker() {
 
 function checkBrowserSupport() {
   /*
-   * Secure context: Necessary to enable most of these features
-   * Service Worker: PWA and cross-origin isolation headers
-   * WebAssembly: Edit distance computation and waveform generation
-   * Audio Worklet: Waveform playback
+   * Feature            Preconditions for availability  Required?
+   * -----------------  ------------------------------  ---------
+   * WebAssembly        N/A, always available           Yes
+   *
+   * Audio Worklet      Secure context                  Yes
+   *
+   * SharedArrayBuffer  Secure context                  Yes
+   *                    Cross-origin isolation headers
+   *
+   * Service worker     Secure context                  No
    */
-  if (
-    !window.isSecureContext ||
-    typeof navigator.serviceWorker === "undefined" ||
-    typeof SharedArrayBuffer === "undefined" ||
-    typeof AudioWorklet === "undefined"
-  )
-    return false;
 
+  let hasWasm: boolean;
   try {
     /* cf. https://stackoverflow.com/a/47880734 */
     const bytes = Uint8Array.of(0x0, 0x61, 0x73, 0x6d, 0x01, 0x00, 0x00, 0x00);
     const module = new WebAssembly.Module(bytes);
-    return new WebAssembly.Instance(module) instanceof WebAssembly.Instance;
+    const instance = new WebAssembly.Instance(module);
+    hasWasm = instance instanceof WebAssembly.Instance;
   } catch {
-    return false;
+    hasWasm = false;
   }
+  if (!hasWasm) return "WebAssembly is not available.";
+
+  const hasSecureContext = window.isSecureContext;
+  if (!hasSecureContext) return "Page was not loaded in a secure context.";
+
+  const hasAudioWorklet = typeof AudioWorklet !== "undefined";
+  if (!hasAudioWorklet) return "Audio Worklet is not available.";
+
+  const hasSharedArrayBuffer = typeof SharedArrayBuffer !== "undefined";
+  if (!hasSharedArrayBuffer) {
+    /*
+     * If we're in prod and service workers are available, our service worker
+     * is not installed yet. It will patch in COI headers when installed, and
+     * SharedArrayBuffer will then be available.
+     */
+    const hasServiceWorker =
+      import.meta.env.MODE === "production" &&
+      typeof navigator.serviceWorker !== "undefined";
+    if (!hasServiceWorker) return "SharedArrayBuffer is not available.";
+  }
+
+  return "";
 }
 
-const kDelayMs = 5000;
+const kDelayMs = 3000;
 
 @customElement("time-station-emulator")
 export class TimeStationEmulator extends BaseElement {
@@ -114,11 +139,45 @@ export class TimeStationEmulator extends BaseElement {
   connectedCallback() {
     super.connectedCallback();
 
+    /* Pretending browser checks take time turns out to be good UX. */
     this.#timeoutId = setTimeout(() => {
-      if (!checkBrowserSupport()) this.mainState = "error";
+      const supportMessage = checkBrowserSupport();
+      const hasBrowserSupport = supportMessage === "";
+
+      if (!hasBrowserSupport) {
+        this.publish(
+          ToastEvent,
+          "error",
+          `${supportMessage} Your browser is probably unsupported. Sorry!`,
+        );
+        this.mainState = "error";
+      }
+
+      const { userAgent } = navigator;
+      const isMobileSafari = /iPad|iPhone|iPod|Watch/.test(userAgent);
+      const isMobileFirefox =
+        /Firefox/.test(userAgent) && /Android/.test(userAgent);
+
+      if (isMobileSafari) {
+        this.publish(
+          ToastEvent,
+          "warning",
+          html`Your browser is Mobile Safari, which probably won&rsquo;t work.
+          Good luck!`,
+        );
+      } else if (isMobileFirefox) {
+        this.publish(
+          ToastEvent,
+          "warning",
+          "Your browser is Mobile Firefox, which may not work. Good luck!",
+        );
+      }
     }, kDelayMs);
 
-    if (import.meta.env.MODE === "production") registerServiceWorker();
+    const hasServiceWorker =
+      import.meta.env.MODE === "production" &&
+      typeof navigator.serviceWorker !== "undefined";
+    if (hasServiceWorker) registerServiceWorker();
 
     if (AppSettings.get("sync")) serverTimeTask();
     else this.#serverTimeReady = true;
@@ -192,6 +251,8 @@ export class TimeStationEmulator extends BaseElement {
       </div>
 
       <nav-bar></nav-bar>
+
+      <toast-manager></toast-manager>
     `;
   }
 }

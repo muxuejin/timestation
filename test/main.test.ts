@@ -66,4 +66,9 @@ describe("Main", () => {
       expect(spy).toHaveBeenCalledWith(value);
     });
   });
+
+  it("checks browser support", async () => {
+    /* checkBrowserSupport() runs by itself; we just need it to not throw. */
+    await delay(5000);
+  }, 10000);
 });
