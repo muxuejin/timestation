@@ -9,3 +9,4 @@ export const SettingsEvent = "Settings" as const;
 export const SettingsReadyEvent = "SettingsReady" as const;
 export const TimeSignalReadyEvent = "TimeSignalReady" as const;
 export const TimeSignalStateChangeEvent = "TimeSignalStateChange" as const;
+export const ToastEvent = "ToastManager" as const;
