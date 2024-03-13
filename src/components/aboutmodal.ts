@@ -81,8 +81,8 @@ export class AboutModal extends BaseElement {
             <!-- Invisible dummy button takes autofocus when modal is opened -->
             <button></button>
 
-            <button class="btn btn-ghost btn-sm p-0">
-              <span class="size-8">${svgIcons.close}</span>
+            <button class="btn btn-circle btn-ghost btn-sm p-0">
+              <span class="size-6 sm:size-8">${svgIcons.close}</span>
             </button>
           </form>
 
@@ -218,21 +218,23 @@ export class AboutModal extends BaseElement {
                                   DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO
                                   DETERMINE VOLUME.
                                 </span>
-                                Use a visual volume indicator instead.
                               </p>
+                              <p>Use a visual volume indicator instead.</p>
                               <p>
                                 The generated waveform has full dynamic range,
                                 but is pitched high enough to be difficult to
                                 perceive.
                               </p>
                               <p>
-                                Many common devices are capable of playing it
+                                <span class="font-bold">
+                                  Even if you &ldquo;can&rsquo;t hear
+                                  anything&rdquo;,
+                                </span>
+                                many common devices are capable of playing it
                                 back loud enough to potentially cause
                                 <span class="font-bold">
-                                  permanent hearing damage,
+                                  permanent hearing damage!
                                 </span>
-                                even if you &ldquo;can&rsquo;t hear
-                                anything&rdquo;!
                               </p>
                             </span>
                           </div>

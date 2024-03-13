@@ -87,7 +87,7 @@ For other devices, **Time Station Emulator** works best with a
 
    | WARNING |
    | --- |
-   | **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**<br>Use a visual volume indicator instead.<br><br>The generated waveform has full dynamic range, but is pitched high enough to be difficult to perceive.<br><br>Many common devices are capable of playing it back loud enough to potentially cause **permanent hearing damage**, even if you &ldquo;can&rsquo;t hear anything&rdquo;! |
+   | **DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.**<br><br>Use a visual volume indicator instead.<br><br>The generated waveform has full dynamic range, but is pitched high enough to be difficult to perceive.<br><br>**Even if you &ldquo;can&rsquo;t hear anything&rdquo;,** many common devices are capable of playing it back loud enough to potentially cause **permanent hearing damage!** |
 
 4. **Start transmitting and hold the speaker in position.**
 

@@ -2,10 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FakeAppSettings, delay } from "@test/utils";
 
-import EventBus from "@/shared/eventbus";
-
-import "@/main";
-import { TimeStationEmulator } from "@/main";
+import EventBus from "@shared/eventbus";
 
 import {
   EditDistanceReadyEvent,
@@ -13,8 +10,11 @@ import {
   ServerTimeReadyEvent,
   SettingsReadyEvent,
   TimeSignalReadyEvent,
-} from "@/shared/events";
+} from "@shared/events";
 import "@shared/styles.css";
+
+import "@/main";
+import { TimeStationEmulator } from "@/main";
 
 describe("Main", () => {
   let main: TimeStationEmulator;
