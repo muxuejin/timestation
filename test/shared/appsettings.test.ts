@@ -27,6 +27,7 @@ const testSettingValues: TestSettingValues[] = [
   ["noclip", [true, false], ["zzzz", 0, null]],
   ["sync", [true, false], ["aaaaa", 1, undefined]],
   ["dark", [true, false], ["", -1, "undefined"]],
+  ["nanny", [true, false], ["fff", Infinity, BigInt(0)]],
 ] as const;
 
 const localStoragePrototype = Object.getPrototypeOf(window.localStorage);

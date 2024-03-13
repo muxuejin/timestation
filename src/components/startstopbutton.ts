@@ -1,5 +1,5 @@
 import { html } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 import AppSettings, {
@@ -13,6 +13,7 @@ import {
   ServerOffsetEvent,
   TimeSignalStateChangeEvent,
 } from "@shared/events";
+import { svgIcons } from "@shared/icons";
 import RadioTimeSignal from "@shared/radiotimesignal";
 
 const kStartStopButtonText = {
@@ -55,7 +56,23 @@ export class StartStopButton extends BaseElement {
     }
   }
 
+  @query("start-stop-button dialog", true)
+  private accessor dialog!: HTMLDialogElement;
+
+  @query("start-stop-button dialog input", true)
+  private accessor checkbox!: HTMLInputElement;
+
+  showModal() {
+    this.dialog.showModal();
+  }
+
+  #closeModal() {
+    AppSettings.set("nanny", this.checkbox.checked);
+  }
+
   #start() {
+    if (AppSettings.get("nanny")) this.showModal();
+
     RadioTimeSignal.start({
       stationIndex: knownStations.indexOf(AppSettings.get("station")),
       jjyKhzIndex: knownJjyKhz.indexOf(AppSettings.get("jjyKhz")),
@@ -120,6 +137,60 @@ export class StartStopButton extends BaseElement {
       >
         ${buttonText}
       </button>
+
+      <dialog class="modal" @close=${this.#closeModal}>
+        <div
+          class="modal-box flex max-h-[calc(100dvh-2rem)] w-[90%] max-w-[calc(100dvw-2rem)] flex-col gap-4"
+        >
+          <form class="flex items-center" method="dialog">
+            <h3 class="grow text-xl font-bold sm:text-2xl">Safety Warning</h3>
+
+            <!-- Invisible dummy button takes autofocus when modal is opened -->
+            <button></button>
+
+            <button class="btn btn-circle btn-ghost btn-sm p-0">
+              <span class="size-6 sm:size-8">${svgIcons.close}</span>
+            </button>
+          </form>
+
+          <div
+            class="alert alert-warning grid-flow-col items-start text-start"
+            role="alert"
+          >
+            <span class="size-6 sm:size-8">${svgIcons.warning}</span>
+            <span class="flex min-w-0 flex-col gap-2">
+              <p>
+                <span class="font-bold">
+                  DO NOT PLACE YOUR EARS NEAR THE SPEAKER TO DETERMINE VOLUME.
+                </span>
+              </p>
+              <p>Use a visual volume indicator instead.</p>
+              <p>
+                The generated waveform has full dynamic range, but is pitched
+                high enough to be difficult to perceive.
+              </p>
+              <p>
+                <span class="font-bold">
+                  Even if you &ldquo;can&rsquo;t hear anything&rdquo;,
+                </span>
+                many common devices are capable of playing it back loud enough
+                to potentially cause
+                <span class="font-bold">permanent hearing damage!</span>
+              </p>
+            </span>
+          </div>
+
+          <span class="flex">
+            <span class="grow font-semibold">Show this warning next time</span>
+            <input
+              class="checkbox"
+              type="checkbox"
+              name="nanny"
+              .checked=${AppSettings.get("nanny")}
+            />
+          </span>
+        </div>
+      </dialog>
     `;
   }
 }

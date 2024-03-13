@@ -23,6 +23,7 @@ const FakeRadioTimeSignal = {
 describe("Start-stop button", () => {
   let startStopButton: StartStopButton;
   let innerButton: HTMLButtonElement;
+  let innerDialog: HTMLDialogElement;
 
   beforeEach(async () => {
     startStopButton = document.createElement("start-stop-button");
@@ -30,6 +31,7 @@ describe("Start-stop button", () => {
     document.body.appendChild(startStopButton);
     await delay();
     innerButton = startStopButton.querySelector("button.btn")!;
+    innerDialog = startStopButton.querySelector("dialog")!;
   });
 
   afterEach(() => {
@@ -156,6 +158,34 @@ describe("Start-stop button", () => {
       FakeRadioTimeSignal.state.mockReturnValueOnce("running");
       innerButton.click();
       expect(FakeRadioTimeSignal.stop).toHaveBeenCalled();
+    });
+  });
+
+  describe("can show a safety warning", () => {
+    it("shows warning by default", () => {
+      const spy = vi.spyOn(innerDialog, "showModal");
+      FakeAppSettings.get.mockReturnValueOnce(true); /* App default is true. */
+      innerButton.click();
+      expect(spy).toHaveBeenCalledOnce();
+      spy.mockRestore();
+    });
+
+    it("saves app setting according to checkbox", async () => {
+      const input = innerDialog.querySelector("input")!;
+      const button: HTMLButtonElement =
+        innerDialog.querySelector("button.btn")!;
+      innerDialog.showModal();
+      input.checked = false;
+      button.click();
+      await delay(100);
+      expect(FakeAppSettings.set).toHaveBeenCalledWith("nanny", false);
+    });
+
+    it("does not show warning according to app setting", () => {
+      const spy = vi.spyOn(innerDialog, "showModal");
+      innerButton.click();
+      expect(spy).not.toHaveBeenCalled();
+      spy.mockRestore();
     });
   });
 });

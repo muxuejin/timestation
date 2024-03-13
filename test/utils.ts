@@ -15,6 +15,7 @@ export const TestSettings = {
   noclip: false,
   sync: false,
   dark: false,
+  nanny: false,
 } as const;
 
 export const FakeAppSettings = {
