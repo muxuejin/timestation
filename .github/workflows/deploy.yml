@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,9 +16,6 @@ jobs:
 
       - name: Setup emsdk
         uses: mymindstorm/setup-emsdk@v14
-
-      - name: Build WebAssembly modules
-        run: npm run prebuild
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -33,31 +30,11 @@ jobs:
         with:
           chrome-version: stable
 
-      - name: Run Tests
-        run: npm run test
-
-  deploy:
-    needs: test
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup emsdk
-        uses: mymindstorm/setup-emsdk@v14
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install npm dependencies
-        run: npm ci
-
       - name: Build
         run: npm run build # Also builds WebAssembly modules.
+
+      - name: Run Tests
+        run: npm run test
 
       - name: Deploy on Cloudflare Pages
         uses: cloudflare/pages-action@v1
