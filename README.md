@@ -1,4 +1,4 @@
-<h1 align="center">
+<h1 align="center"><!-- HTML4, but GitHub strips inline styles -->
   Time Station Emulator
   <br>
   <br>
@@ -8,6 +8,17 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="License: MIT">
   </a>
+  <a href="https://github.com/kangtastic/timestation/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/kangtastic/timestation/deploy.yml" alt="GitHub Actions Workflow Status">
+  </a>
+  <a href="https://codecov.io/gh/kangtastic/timestation">
+    <img src="https://codecov.io/gh/kangtastic/timestation/graph/badge.svg?token=6VVYW8WBLG" alt="Codecov">
+  </a>
+  <br>
+  <img src="https://img.shields.io/badge/C-A8B9CC.svg?style=for-the-badge&logo=C&logoColor=black" alt="C">
+  <img src="https://img.shields.io/badge/Lit-324FFF.svg?style=for-the-badge&logo=Lit&logoColor=white" alt="Lit">
+  <img src="https://img.shields.io/badge/TypeScript-3178C6.svg?style=for-the-badge&logo=TypeScript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/WebAssembly-654FF0.svg?style=for-the-badge&logo=WebAssembly&logoColor=white" alt="WebAssembly">
 </h1>
 
 ## Overview
