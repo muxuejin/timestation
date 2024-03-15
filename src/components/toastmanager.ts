@@ -49,7 +49,9 @@ export class ToastManager extends BaseElement {
       >
         <span class="flex items-center gap-4">
           <span class="size-6 sm:size-8">${alertIcon}</span>
-          <span class="w-44 text-wrap text-left text-sm sm:w-64 sm:text-base">
+          <span
+            class="w-44 whitespace-normal text-balance text-left text-sm sm:w-64 sm:text-base"
+          >
             ${message}
           </span>
           <button

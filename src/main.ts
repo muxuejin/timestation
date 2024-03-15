@@ -85,7 +85,8 @@ function checkBrowserSupport() {
   return "";
 }
 
-const kDelayMs = 3000;
+const kBrowserDelayMs = 3000 as const;
+const kDelayMs = 1000 as const;
 
 @customElement("time-station-emulator")
 export class TimeStationEmulator extends BaseElement {
@@ -139,7 +140,10 @@ export class TimeStationEmulator extends BaseElement {
   connectedCallback() {
     super.connectedCallback();
 
-    /* Pretending browser checks take time turns out to be good UX. */
+    /*
+     * Loading screen would otherwise show forever if we lack browser support.
+     * Also, pretending browser checks take time turns out to be good UX.
+     */
     this.#timeoutId = setTimeout(() => {
       const supportMessage = checkBrowserSupport();
       const hasBrowserSupport = supportMessage === "";
@@ -152,7 +156,10 @@ export class TimeStationEmulator extends BaseElement {
         );
         this.mainState = "error";
       }
+    }, kBrowserDelayMs);
 
+    /* User-Agent warnings should not fail to display if WASM loads. */
+    setTimeout(() => {
       const { userAgent } = navigator;
       const isMobileSafari = /iPad|iPhone|iPod|Watch/.test(userAgent);
       const isMobileFirefox =
@@ -203,7 +210,7 @@ export class TimeStationEmulator extends BaseElement {
     return html`
       <div class="absolute flex size-full flex-col">
         <div
-          class="${showIfLoading} m-auto w-1/2 fill-current drop-shadow-aura"
+          class="${showIfLoading} m-auto w-1/3 fill-current drop-shadow-aura"
         >
           ${svgLogo}
         </div>
