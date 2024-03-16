@@ -1,9 +1,14 @@
 import { SVGTemplateResult, TemplateResult, html, svg } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, query, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
 import BaseElement, { registerEventHandler } from "@shared/element";
-import { ReadyBusyEvent, TimeSignalStateChangeEvent } from "@shared/events";
+import {
+  ReadyBusyEvent,
+  TimeSignalReadyEvent,
+  TimeSignalStateChangeEvent,
+  VisualizerIconEvent,
+} from "@shared/events";
 import { TimeSignalState } from "@shared/radiotimesignal";
 
 /* ionicons v5.0.0: https://ionic.io/ionicons */
@@ -25,7 +30,7 @@ const kSvgFragments = {
   ],
 } as const;
 
-type IndicatorIconState = keyof typeof kSvgFragments;
+type VisualizerIconState = keyof typeof kSvgFragments;
 
 const kSpinner = html`
   <span class="loading loading-spinner sm:loading-lg"></span>
@@ -33,10 +38,10 @@ const kSpinner = html`
 
 const kDelayMs = 500 as const;
 
-@customElement("indicator-icon")
-export class IndicatorIcon extends BaseElement {
+@customElement("visualizer-icon")
+export class VisualizerIcon extends BaseElement {
   @property({ type: String })
-  accessor iconState: IndicatorIconState = "mute";
+  accessor iconState: VisualizerIconState = "mute";
 
   @state()
   private accessor ready = false;
@@ -44,10 +49,20 @@ export class IndicatorIcon extends BaseElement {
   @state()
   private accessor pulse = false;
 
+  @state()
+  private accessor started = false;
+
+  @query("visualizer-icon canvas", true)
+  private accessor canvas!: HTMLCanvasElement;
+
+  #isSmallWidescreen = window.matchMedia(
+    "(min-width: 640px) and (max-height: 600px)",
+  );
+
   #timeoutId?: ReturnType<typeof setTimeout>;
 
-  #updateIcon = (iconState: IndicatorIconState) => {
-    const nextIconState: IndicatorIconState =
+  #updateIcon = (iconState: VisualizerIconState) => {
+    const nextIconState: VisualizerIconState =
       iconState === "off" ? "low"
       : iconState === "low" ? "medium"
       : iconState === "medium" ? "high"
@@ -58,12 +73,21 @@ export class IndicatorIcon extends BaseElement {
 
   #start() {
     this.#timeoutId = setTimeout(this.#updateIcon, 0, "off");
+    this.started = true;
   }
 
   #stop() {
     clearTimeout(this.#timeoutId);
     this.iconState = "mute";
     this.pulse = false;
+    this.started = false;
+  }
+
+  constructor() {
+    super();
+    this.#isSmallWidescreen.addEventListener("change", () => {
+      this.requestUpdate();
+    });
   }
 
   @registerEventHandler(TimeSignalStateChangeEvent)
@@ -71,6 +95,11 @@ export class IndicatorIcon extends BaseElement {
     if (newState === "startup") this.pulse = true;
     if (newState === "fadein") this.#start();
     if (newState === "idle") this.#stop();
+  }
+
+  @registerEventHandler(TimeSignalReadyEvent)
+  handleTimeSignalReady() {
+    this.publish(VisualizerIconEvent, this.canvas);
   }
 
   @registerEventHandler(ReadyBusyEvent)
@@ -104,18 +133,26 @@ export class IndicatorIcon extends BaseElement {
   protected render() {
     const animate = classMap({ "animate-pulse": this.pulse });
 
+    const visualize = this.started && !this.#isSmallWidescreen.matches;
+    const showOnVisualize = classMap({ hidden: !visualize });
+    const hideOnVisualize = classMap({ hidden: visualize });
+
     return html`
-      <div class="grid size-full place-items-center">
-        <span class="${animate} fill-current drop-shadow-aura">
+      <div
+        class="${hideOnVisualize} grid size-36 place-items-center sm:size-48 [@media((min-width:640px)_and_(max-height:600px))]:size-16"
+      >
+        <span class="${animate} fill-current drop-shadow-aura ">
           ${this.ready ? this.#makeIcon() : kSpinner}
         </span>
       </div>
+
+      <canvas class="${showOnVisualize} h-36 w-full sm:h-48"></canvas>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    "indicator-icon": IndicatorIcon;
+    "visualizer-icon": VisualizerIcon;
   }
 }

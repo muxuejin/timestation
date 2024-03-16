@@ -32,7 +32,7 @@ describe("Main", () => {
   it("renders components", () => {
     expect(main.querySelector("nav-bar")).not.toBeNull();
     expect(main.querySelector("transmit-clock")).not.toBeNull();
-    expect(main.querySelector("indicator-icon")).not.toBeNull();
+    expect(main.querySelector("visualizer-icon")).not.toBeNull();
     expect(main.querySelector("start-stop-button")).not.toBeNull();
   });
 

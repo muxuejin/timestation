@@ -2,12 +2,12 @@ import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { classMap } from "lit/directives/class-map.js";
 
-import "@components/indicatoricon";
 import "@components/infodropdown";
 import "@components/navbar";
 import "@components/startstopbutton";
 import "@components/toastmanager";
 import "@components/transmitclock";
+import "@components/visualizericon";
 
 import AppSettings from "@shared/appsettings";
 import BaseElement, { registerEventHandler } from "@shared/element";
@@ -233,9 +233,9 @@ export class TimeStationEmulator extends BaseElement {
             class="[@media((max-width:639px)_or_(min-height:601px))]:hidden [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:mr-4 [@media((min-width:640px)_and_(max-height:600px))]:size-16"
           ></span>
 
-          <indicator-icon
-            class="size-36 sm:size-48 [@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4 [@media((min-width:640px)_and_(max-height:600px))]:size-16 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start"
-          ></indicator-icon>
+          <visualizer-icon
+            class="[@media((min-width:640px)_and_(max-height:600px))]:col-start-3 [@media((min-width:640px)_and_(max-height:600px))]:my-auto [@media((min-width:640px)_and_(max-height:600px))]:ml-4 [@media((min-width:640px)_and_(max-height:600px))]:place-self-start"
+          ></visualizer-icon>
 
           <start-stop-button
             class="[@media((min-width:640px)_and_(max-height:600px))]:col-start-2 [@media((min-width:640px)_and_(max-height:600px))]:row-start-3"

@@ -4,6 +4,7 @@ import EventBus from "@shared/eventbus";
 import {
   TimeSignalReadyEvent,
   TimeSignalStateChangeEvent,
+  VisualizerIconEvent,
 } from "@shared/events";
 
 import createTimeSignalModule from "../../wasm/timesignal.js";
@@ -57,6 +58,10 @@ const kTimeSignalState = [
 ] as const;
 export type TimeSignalState = (typeof kTimeSignalState)[number];
 
+const kVisualizeMs = 5000 as const;
+const kQuantums = 384 as const;
+const kFftSize = 32 as const;
+
 class RadioTimeSignal {
   static #instance: RadioTimeSignal;
 
@@ -67,6 +72,14 @@ class RadioTimeSignal {
   audioContext!: AudioContext;
 
   audioWorkletNode!: AudioWorkletNode;
+
+  analyserNode!: AnalyserNode;
+
+  canvas!: HTMLCanvasElement;
+
+  canvasCtx!: CanvasRenderingContext2D;
+
+  animationId!: ReturnType<typeof requestAnimationFrame>;
 
   #state = 0;
 
@@ -84,6 +97,7 @@ class RadioTimeSignal {
       throw new Error("RadioTimeSignal is a singleton class.");
     createTimeSignalModule().then(this.#init);
     RadioTimeSignal.#instance = this;
+    EventBus.subscribe(this, VisualizerIconEvent, this.#handleVisualizerIcon);
   }
 
   #init = (module: TimeSignalModule) => {
@@ -109,12 +123,87 @@ class RadioTimeSignal {
     this.audioWorkletNode = this.#module.emscriptenGetAudioObject(
       audioWorkletNodeHandle,
     ) as AudioWorkletNode;
-    this.audioWorkletNode.connect(this.audioContext.destination);
+    this.analyserNode = this.audioContext.createAnalyser();
+    this.audioWorkletNode.connect(this.analyserNode);
+    this.analyserNode.connect(this.audioContext.destination);
 
     /* Rarely, against spec, the AudioContext seems to start on its own?! */
     if (this.audioContext.state === "running") this.audioContext.suspend();
 
     EventBus.publish(TimeSignalReadyEvent);
+  };
+
+  #handleVisualizerIcon = (canvas: HTMLCanvasElement) => {
+    this.canvas = canvas;
+    this.canvasCtx = canvas.getContext("2d")!;
+  };
+
+  #visualize = () => {
+    const { width, height } = this.canvas;
+    const quantumMs = kVisualizeMs / kQuantums;
+
+    /* FFT size might be different from that requested. */
+    this.analyserNode.fftSize = kFftSize;
+    const { fftSize } = this.analyserNode;
+
+    const frameData = new Uint8Array(fftSize);
+    const data = new Array<number>(kQuantums).fill(0);
+    let prevTimestamp: number | undefined;
+    let k = 0;
+
+    const draw = (timestamp?: number) => {
+      if (prevTimestamp == null || timestamp == null) {
+        prevTimestamp = timestamp;
+        this.animationId = requestAnimationFrame(draw);
+        return;
+      }
+
+      const elapsed = timestamp - prevTimestamp;
+      const quantumsElapsed = Math.trunc(elapsed / quantumMs);
+
+      if (quantumsElapsed > 0) {
+        prevTimestamp += Math.trunc(quantumsElapsed) * quantumMs;
+
+        this.analyserNode.getByteTimeDomainData(frameData);
+        const magnitude = frameData.reduce(
+          (acc, n) => Math.max(acc, Math.abs(n - 128)),
+          0,
+        );
+
+        for (let i = 0; i < quantumsElapsed; i++) {
+          data[k++] = magnitude;
+          if (k === data.length) k = 0;
+        }
+
+        this.canvasCtx.clearRect(0, 0, width, height);
+        this.canvasCtx.beginPath();
+        this.canvasCtx.lineWidth = 2;
+
+        /*
+         * Workaround for not being able to access CSS variables directly.
+         * Stroke color is daisyUI's base-content, which depends on dark mode.
+         */
+        const style = getComputedStyle(this.canvas);
+        const color = style.getPropertyValue("--bc");
+        this.canvasCtx.strokeStyle = `oklch(${color})`;
+
+        for (let i = 0; i < data.length; i++) {
+          const j = (i + k) % data.length;
+
+          const x = (width * i) / data.length;
+          const y = Math.max(1, height - 1 - (height * data[j]) / 128);
+
+          if (i === 0) this.canvasCtx.moveTo(x, y);
+          else this.canvasCtx.lineTo(x, y);
+        }
+
+        this.canvasCtx.stroke();
+      }
+
+      this.animationId = requestAnimationFrame(draw);
+    };
+
+    draw();
   };
 
   #communicate = (state: number) => {
@@ -124,11 +213,14 @@ class RadioTimeSignal {
 
     if (this.state === "idle") {
       this.audioContext.suspend().then(() => {
+        cancelAnimationFrame(this.animationId);
         if (import.meta.env.DEV)
           console.log(`Suspended playback at ${Date.now()}`);
       });
     } else if (this.state === "reqparams") {
       this.#sendParams();
+    } else if (this.state === "fadein") {
+      this.#visualize();
     }
   };
 
