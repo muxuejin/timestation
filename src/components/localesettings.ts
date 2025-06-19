@@ -69,7 +69,7 @@ export class LocaleSettings extends BaseElement {
             .content=${html`
               <h4 class="font-bold">Locale</h4>
               <span class="float-left text-sm">
-                Changes only how transmitted time is displayed.
+                仅更改传输时间的显示方式.
               </span>
             `}
             grow
