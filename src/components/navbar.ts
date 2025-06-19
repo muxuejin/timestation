@@ -104,7 +104,7 @@ export class NavBar extends BaseElement {
                 <a class="px-2" @click=${this.#clickAbout}>
                   <span class="flex items-center sm:py-1">
                     <span class="size-6 sm:size-8">${svgIcons.help}</span>
-                    <span class="mx-2">About</span>
+                    <span class="mx-2">关于</span>
                   </span>
                 </a>
               </li>
@@ -113,7 +113,7 @@ export class NavBar extends BaseElement {
                 <a class="${disabled} px-2" @click=${this.#clickSettings}>
                   <span class="flex items-center sm:py-1">
                     <span class="size-6 sm:size-8">${svgIcons.settings}</span>
-                    <span class="mx-2">Settings</span>
+                    <span class="mx-2">设置</span>
                   </span>
                 </a>
               </li>
