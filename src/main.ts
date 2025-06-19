@@ -61,13 +61,13 @@ function checkBrowserSupport() {
   } catch {
     hasWasm = false;
   }
-  if (!hasWasm) return "WebAssembly is not available.";
+  if (!hasWasm) return "WebAssembly 不可用.";
 
   const hasSecureContext = window.isSecureContext;
-  if (!hasSecureContext) return "Page was not loaded in a secure context.";
+  if (!hasSecureContext) return "页面未在安全上下文中加载.";
 
   const hasAudioWorklet = typeof AudioWorklet !== "undefined";
-  if (!hasAudioWorklet) return "Audio Worklet is not available.";
+  if (!hasAudioWorklet) return "音频切片不可用.";
 
   const hasSharedArrayBuffer = typeof SharedArrayBuffer !== "undefined";
   if (!hasSharedArrayBuffer) {
@@ -79,7 +79,7 @@ function checkBrowserSupport() {
     const hasServiceWorker =
       import.meta.env.MODE === "production" &&
       typeof navigator.serviceWorker !== "undefined";
-    if (!hasServiceWorker) return "SharedArrayBuffer is not available.";
+    if (!hasServiceWorker) return "SharedArrayBuffer 不可用.";
   }
 
   return "";
@@ -152,7 +152,7 @@ export class TimeStationEmulator extends BaseElement {
         this.publish(
           ToastEvent,
           "error",
-          `${supportMessage} Your browser is probably unsupported. Sorry!`,
+          `${supportMessage} 您的浏览器可能不受支持. 对不起!`,
         );
         this.mainState = "error";
       }
@@ -169,14 +169,13 @@ export class TimeStationEmulator extends BaseElement {
         this.publish(
           ToastEvent,
           "warning",
-          html`Your browser is Mobile Safari, which probably won&rsquo;t work.
-          Good luck!`,
+          html`您的浏览器是移动版 Safari, 这可能行不通.祝你好运!`,
         );
       } else if (isMobileFirefox) {
         this.publish(
           ToastEvent,
           "warning",
-          "Your browser is Mobile Firefox, which may not work. Good luck!",
+          "您的浏览器是 Firefox 移动版, 这可能行不通.祝你好运!",
         );
       }
     }, kDelayMs);
@@ -221,7 +220,7 @@ export class TimeStationEmulator extends BaseElement {
           <span
             class="text-center align-text-bottom text-2xl font-semibold min-[480px]:text-3xl sm:text-4xl [@media((min-width:640px)_and_(max-height:600px))]:col-span-3"
           >
-            Time Station Emulator
+            时间站模拟器
           </span>
 
           <transmit-clock
@@ -246,13 +245,13 @@ export class TimeStationEmulator extends BaseElement {
           class="${showIfError} m-auto grid h-1/2 min-h-[360px] place-items-center"
         >
           <span class="text-center text-lg font-bold sm:text-2xl">
-            Browser may be unsupported!
+            浏览器可能不受支持!
           </span>
           <span class="size-36 drop-shadow-aura sm:size-48">
             ${svgIcons.sad}
           </span>
           <span class="text-center text-lg font-bold sm:text-2xl">
-            Try reloading this page.
+            尝试重新加载此页面.
           </span>
         </div>
       </div>
